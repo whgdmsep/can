@@ -1,0 +1,230 @@
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix edu: <http://library.school.go.kr/metadata/curriculum/> .
+@prefix res: <http://library.school.go.kr/resource/> .
+
+# --- 과목 정의 (Subjects) ---
+edu:MiddleSchoolEthics a skos:Concept ; skos:prefLabel "중학교 도덕" .
+edu:ModernSocietyEthics a skos:Concept ; skos:prefLabel "고등학교 현대사회와 윤리" .
+edu:EthicsAndThought a skos:Concept ; skos:prefLabel "고등학교 윤리와 사상" .
+edu:HumanitiesEthics a skos:Concept ; skos:prefLabel "고등학교 인문학과 윤리" .
+
+
+# ==========================================================
+# 1. 성취기준 및 자료 연결 (Standards & Links)
+# ==========================================================
+
+# [자신과의 관계]
+edu:ST_9do01-01 a edu:Standard ;
+    dc:identifier "9도01-01" ;
+    edu:volume "도덕 1" ;
+    skos:definition "자신의 삶과 가치관에 대한 성찰을 통해 자아를 올바로 이해하고, 삶에서 도덕이 필요한 이유에 근거하여 도덕적인 삶에 대한 의지를 기른다." ;
+    edu:recommendedResource res:Book_SuperTurtle .
+
+edu:ST_9do01-02 a edu:Standard ;
+    dc:identifier "9도01-02" ;
+    edu:volume "도덕 1" ;
+    skos:definition "일상에서 발생하는 부도덕한 행동의 여러 원인을 분석하고, 도덕적 인격이 갖추어야 할 특성들을 파악하여 이를 내면화하는 의지를 기른다." ;
+    edu:recommendedResource res:Book_GoldenSlumber .
+
+edu:ST_9do01-03 a edu:Standard ;
+    dc:identifier "9도01-03" ;
+    edu:volume "도덕 1" ;
+    skos:definition "행복에 관한 심리적, 사회적, 윤리적 접근 등을 통해 행복의 의미를 종합적으로 파악하고, 삶의 목적과 행복의 관계를 정립할 수 있다." ;
+    edu:recommendedResource res:Movie_HectorHappiness .
+
+edu:ST_9do01-04 a edu:Standard ;
+    dc:identifier "9도01-04" ;
+    edu:volume "도덕 2" ;
+    skos:definition "옳고 그름을 분별할 수 있는 도덕적 기준을 탐구하고, 도덕적 상상력을 바탕으로 일상의 도덕 문제들에 도덕적 추론을 적용할 수 있다." ;
+    edu:recommendedResource res:Book_JusticeForYouth .
+
+edu:ST_9do01-05 a edu:Standard ;
+    dc:identifier "9도01-05" ;
+    edu:volume "도덕 2" ;
+    skos:definition "삶의 유한함에 관한 성찰을 통해 생명의 소중함과 의미 있는 삶의 중요성을 인식하고, 자신의 미래 모습을 상상하며 삶을 계획하고 이를 실천하는 의지를 기른다." ;
+    edu:recommendedResource res:Book_TuesdaysWithMorrie .
+
+edu:ST_9do01-06 a edu:Standard ;
+    dc:identifier "9도01-06" ;
+    edu:volume "도덕 2" ;
+    skos:definition "내면에 대한 성찰을 통해 심리적 고통과 불안, 우울감 등의 원인을 찾고, 마음의 평온을 얻을 수 있는 방안들을 다각적으로 모색하여 실천할 수 있다." ;
+    edu:recommendedResource res:Book_MindManagement .
+
+edu:ST_9do01-07 a edu:Standard ;
+    dc:identifier "9도01-07" ;
+    edu:volume "도덕 2" ;
+    skos:definition "삶에서 직업이 갖는 의미와 가치를 파악하며, 사례 탐구를 통해 직업적 양심과 직업윤리의 필요성을 정당화할 수 있다." ;
+    edu:recommendedResource res:Movie_Hudsucker .
+
+# [타인과의 관계]
+edu:ST_9do02-01 a edu:Standard ;
+    dc:identifier "9도02-01" ;
+    edu:volume "도덕 1" ;
+    skos:definition "정서적, 배려적 공동체로서 가정의 특성과 도덕적 기능을 파악하고, 가정에서 발생하는 갈등을 공감적인 소통과 민주적인 과정을 통해 해소하는 의지를 기른다." ;
+    edu:recommendedResource res:Movie_InsideOut .
+
+edu:ST_9do02-02 a edu:Standard ;
+    dc:identifier "9도02-02" ;
+    edu:volume "도덕 1" ;
+    skos:definition "친구의 의미와 가치를 삶의 맥락 속에서 탐구하고, 서로를 인격적으로 존중하는 친구 관계를 상상하며 이를 실현하는 의지를 기른다." ;
+    edu:recommendedResource res:Book_FriendLegend .
+
+edu:ST_9do02-03 a edu:Standard ;
+    dc:identifier "9도02-03" ;
+    edu:volume "도덕 1" ;
+    skos:definition "가상공간과 현실 세계에 대한 비교⋅분석을 바탕으로 가상공간에서 발생하는 도덕 문제들의 원인과 해결 방안을 제안하고, 타인을 존중하며 가상공간을 활용하는 태도를 함양한다." ;
+    edu:recommendedResource res:Docu_SocialDilemma .
+
+edu:ST_9do02-04 a edu:Standard ;
+    dc:identifier "9도02-04" ;
+    edu:volume "도덕 2" ;
+    skos:definition "인간을 관계적 존재로 해석할 수 있는 이유에 근거하여 타인과의 관계에서 필요한 가치⋅덕목을 탐구하고, 타인의 생각과 감정에 공감하는 태도를 기른다." ;
+    edu:recommendedResource res:Book_Wonder .
+
+edu:ST_9do02-05 a edu:Standard ;
+    dc:identifier "9도02-05" ;
+    edu:volume "도덕 2" ;
+    skos:definition "다양한 갈등 상황을 평화적으로 해결할 수 있는 방안을 모색하고, 폭력의 유형과 원인, 결과에 대한 분석을 바탕으로 일상의 폭력 상황에 대한 대처 능력을 기른다." ;
+    edu:recommendedResource res:Book_Piggybook .
+
+edu:ST_9do02-06 a edu:Standard ;
+    dc:identifier "9도02-06" ;
+    edu:volume "도덕 2" ;
+    skos:definition "청소년기의 바람직한 성윤리를 탐구하여 내면화하고, 사회⋅문화적 차원에서 성의 의미를 파악하여 성에 대한 편견의 문제점을 분석하고 이를 바로잡는 의지를 기른다." ;
+    edu:recommendedResource res:Book_PaperBagPrincess .
+
+# [사회·국가·지구 공동체]
+edu:ST_9do03-01 a edu:Standard ;
+    dc:identifier "9도03-01" ;
+    edu:volume "도덕 1" ;
+    skos:definition "인권을 존중해야 하는 도덕적 이유를 정당화하고, 인권 침해 사례에 대한 탐구를 통해 그 원인과 해결 방안을 도출함으로써 인권 감수성을 기른다." ;
+    edu:recommendedResource res:Book_HumanRights .
+
+edu:ST_9do03-02 a edu:Standard ;
+    dc:identifier "9도03-02" ;
+    edu:volume "도덕 1" ;
+    skos:definition "외집단에 대한 편견을 비판적으로 분석하고, 타문화⋅타종교⋅타인종을 존중해야 하는 이유에 근거하여 차이와 다양성에 대한 열린 마음을 기른다." ;
+    edu:recommendedResource res:Book_TrueStoryWolf .
+
+edu:ST_9do03-03 a edu:Standard ;
+    dc:identifier "9도03-03" ;
+    edu:volume "도덕 1" ; # 선생님 요청 반영: 통일 윤리를 도덕 1로 배치
+    skos:definition "북한에 대한 이해를 바탕으로 분단의 문제점을 분석하고, 도덕적 가치에 기초하여 통일의 의미를 재구성함으로써 바람직한 남북관계 및 통일의 방향을 제안할 수 있다." ;
+    edu:recommendedResource res:Movie_AsOne .
+
+edu:ST_9do03-04 a edu:Standard ;
+    dc:identifier "9도03-04" ;
+    edu:volume "도덕 2" ;
+    skos:definition "정의로운 사회를 상상해보고, 이를 실현할 수 있는 정의의 원칙과 제도에 대한 다양한 의견들을 민주적인 방식으로 종합할 수 있다." ;
+    edu:recommendedResource res:Book_JusticeForKids .
+
+edu:ST_9do03-05 a edu:Standard ;
+    dc:identifier "9도03-05" ;
+    edu:volume "도덕 2" ;
+    skos:definition "국가와 시민 사이에서 발생하는 윤리적 쟁점들을 탐구하고, 국가와 시민 사이의 바람직한 관계에 기초하여 국가와 시민의 역할을 재구성할 수 있다." ;
+    edu:recommendedResource res:Movie_TheAttorney .
+
+edu:ST_9do03-06 a edu:Standard ;
+    dc:identifier "9도03-04" ; # 원본 식별자 유지
+    edu:volume "도덕 2" ;
+    skos:definition "인류의 고통에 공감하며 지구적 차원의 다양한 도덕 문제들을 탐구하고, 해결 방안을 모색하여 실천하는 자세를 갖는다." ;
+    edu:recommendedResource res:Docu_Anthropocene .
+
+edu:ST_9do03-07 a edu:Standard ;
+    dc:identifier "9도03-07" ;
+    edu:volume "도덕 2" ;
+    skos:definition "현대 과학기술과 관련된 윤리적 쟁점의 분석을 통해 과학기술의 유용성과 한계를 인식하고, 과학기술의 바람직한 활용에 관한 관심과 책임 의식을 기른다." ;
+    edu:recommendedResource res:Book_BraveNewWorld .
+
+# [자연·초월과의 관계]
+edu:ST_9do04-01 a edu:Standard ;
+    dc:identifier "9도04-01" ;
+    edu:volume "도덕 1" ;
+    skos:definition "인간 이외의 생명체를 도덕적으로 고려해야 하는 이유를 정당화하고, 생명을 가진 존재들이 겪는 고통에 공감하며 생명을 소중히 여기는 태도를 기른다." ;
+    edu:recommendedResource res:Book_LifeRespect .
+
+edu:ST_9do04-02 a edu:Standard ;
+    dc:identifier "9도04-02" ;
+    edu:volume "도덕 2" ;
+    skos:definition "자연에 대한 동양과 서양의 주요 입장들을 토대로 인간과 자연의 바람직한 관계를 도출하고, 환경 위기에 대한 윤리적 책임을 구체화하여 실천할 수 있다." ;
+    edu:recommendedResource res:Movie_Mononoke .
+
+
+# ==========================================================
+# 2. 리소스 상세 정보 (Resource Details) - edu:mediaTag 추가 버전
+# ==========================================================
+
+res:Book_SuperTurtle a edu:LearningResource ; dc:title "슈퍼 거북" ; dc:creator "유설화" ; dc:type "도서" ; edu:mediaTag "그림책" .
+res:Book_GoldenSlumber a edu:LearningResource ; dc:title "골든 슬럼버" ; dc:creator "이사카 코타로" ; dc:type "도서" ; edu:mediaTag "소설" .
+res:Movie_HectorHappiness a edu:LearningResource ; dc:title "꾸뻬 씨의 행복여행" ; dc:type "영화" ; edu:mediaTag "실사영화" .
+res:Book_JusticeForYouth a edu:LearningResource ; dc:title "정의란 무엇인가(청소년)" ; dc:creator "마이클 샌델" ; dc:type "도서" ; edu:mediaTag "인문교양" .
+res:Book_TuesdaysWithMorrie a edu:LearningResource ; dc:title "모리와 함께한 화요일" ; dc:creator "미치 앨봄" ; dc:type "도서" ; edu:mediaTag "에세이" .
+res:Book_MindManagement a edu:LearningResource ; dc:title "기분을 관리하면 인생이 관리된다" ; dc:creator "남인숙" ; dc:type "도서" ; edu:mediaTag "자기계발" .
+res:Movie_Hudsucker a edu:LearningResource ; dc:title "허드서커 대리인" ; dc:type "영화" ; edu:mediaTag "실사영화" .
+res:Movie_InsideOut a edu:LearningResource ; dc:title "인사이드 아웃" ; dc:type "영화" ; edu:mediaTag "애니메이션" .
+res:Book_FriendLegend a edu:LearningResource ; dc:title "친구의 전설" ; dc:creator "이지은" ; dc:type "도서" ; edu:mediaTag "그림책" .
+res:Docu_SocialDilemma a edu:LearningResource ; dc:title "소셜 딜레마" ; dc:type "다큐멘터리" ; edu:mediaTag "넷플릭스" .
+res:Book_Wonder a edu:LearningResource ; dc:title "원더" ; dc:creator "R.J. 팔라시오" ; dc:type "도서" ; edu:mediaTag "소설" .
+res:Book_Piggybook a edu:LearningResource ; dc:title "돼지책" ; dc:creator "앤서니 브라운" ; dc:type "도서" ; edu:mediaTag "그림책" .
+res:Book_PaperBagPrincess a edu:LearningResource ; dc:title "종이 봉지 공주" ; dc:creator "로버트 먼치" ; dc:type "도서" ; edu:mediaTag "그림책" .
+res:Book_HumanRights a edu:LearningResource ; dc:title "무기력한 인권은 가라" ; dc:type "도서" ; edu:mediaTag "인문교양" .
+res:Book_TrueStoryWolf a edu:LearningResource ; dc:title "늑대가 들려주는 아기 돼지 삼형제" ; dc:creator "존 셰스카" ; dc:type "도서" ; edu:mediaTag "그림책" .
+res:Movie_AsOne a edu:LearningResource ; dc:title "코리아" ; dc:type "영화" ; edu:mediaTag "실사영화" .
+res:Book_JusticeForKids a edu:LearningResource ; dc:title "어린이를 위한 정의란 무엇인가" ; dc:type "도서" ; edu:mediaTag "인문교양" .
+res:Movie_TheAttorney a edu:LearningResource ; dc:title "변호인" ; dc:type "영화" ; edu:mediaTag "실사영화" .
+res:Docu_Anthropocene a edu:LearningResource ; dc:title "인류세" ; dc:type "다큐멘터리" ; edu:mediaTag "환경다큐" .
+res:Book_BraveNewWorld a edu:LearningResource ; dc:title "멋진 신세계" ; dc:creator "올더스 헉슬리" ; dc:type "도서" ; edu:mediaTag "고전소설" .
+res:Book_LifeRespect a edu:LearningResource ; dc:title "살아있는 모든 것들에 대한 예의" ; dc:type "도서" ; edu:mediaTag "인문교양" .
+res:Movie_Mononoke a edu:LearningResource ; dc:title "모노노케 히메" ; dc:type "영화" ; edu:mediaTag "애니메이션" .
+
+
+# --- 고등학교 현대사회와 윤리 (12현윤) ---
+edu:ST_12hyunyun01-01 a edu:Standard ; dc:identifier "12현윤01-01" ; dc:subject edu:ModernSocietyEthics ; skos:definition "윤리학의 성격과 특징을 바탕으로 윤리적 존재로서의 인간 본성을 이해하고, 현대사회의 다양한 윤리 문제를 탐구 및 토론할 수 있다." .
+edu:ST_12hyunyun01-02 a edu:Standard ; dc:identifier "12현윤01-02" ; dc:subject edu:ModernSocietyEthics ; skos:definition "동양 및 서양의 윤리사상, 사회사상의 접근들을 비교 분석하고, 이를 현대사회의 다양한 윤리 문제와 쟁점에 적용하여 윤리적 해결 방안을 도출할 수 있다." .
+edu:ST_12hyunyun02-01 a edu:Standard ; dc:identifier "12현윤02-01" ; dc:subject edu:ModernSocietyEthics ; skos:definition "삶과 죽음을 동⋅서양 윤리의 입장에서 성찰하고, 현대사회에서 발생하는 생명윤리 문제를 다양한 윤리적 관점에서 설명할 수 있다." .
+edu:ST_12hyunyun02-02 a edu:Standard ; dc:identifier "12현윤02-02" ; dc:subject edu:ModernSocietyEthics ; skos:definition "사랑과 성에 관한 다양한 입장과 성차별의 윤리적 문제를 이해하고, 현대사회의 결혼 및 가족 문제를 윤리적 관점에서 탐구할 수 있다." .
+edu:ST_12hyunyun02-03 a edu:Standard ; dc:identifier "12현윤02-03" ; dc:subject edu:ModernSocietyEthics ; skos:definition "자연을 바라보는 동⋅서양의 관점을 비교⋅설명할 수 있으며 오늘날 환경 문제의 사례와 심각성을 조사하고, 이에 대한 윤리적 해결 방안을 제시할 수 있다." .
+edu:ST_12hyunyun03-01 a edu:Standard ; dc:identifier "12현윤03-01" ; dc:subject edu:ModernSocietyEthics ; skos:definition "과학기술 연구에 대한 다양한 관점을 조사하여 비교⋅설명할 수 있으며 이를 과학기술의 사회적 책임 문제에 적용하여 비판 또는 정당화할 수 있다." .
+edu:ST_12hyunyun03-02 a edu:Standard ; dc:identifier "12현윤03-02" ; dc:subject edu:ModernSocietyEthics ; skos:definition "정보통신 기술과 뉴미디어의 발달에 따른 윤리 문제들을 제시할 수 있으며 이에 대한 해결 방안을 정보윤리와 미디어 윤리의 관점에서 제시할 수 있다." .
+edu:ST_12hyunyun03-03 a edu:Standard ; dc:identifier "12현윤03-03" ; dc:subject edu:ModernSocietyEthics ; skos:definition "윤리적인 인공지능을 위하여 인간과 인공지능의 관계를 설명하고, 인공지능으로 인해 발생하는 윤리 문제의 해결 방안을 인공지능 윤리의 관점에서 제시할 수 있다." .
+edu:ST_12hyunyun04-01 a edu:Standard ; dc:identifier "12현윤04-01" ; dc:subject edu:ModernSocietyEthics ; skos:definition "직업의 의의와 다양한 직업군에 따른 직업윤리를 제시할 수 있으며 공동체 발전을 위한 청렴한 삶과 노동의 가치에 대한 사회적 존중의 필요성을 설명할 수 있다." .
+edu:ST_12hyunyun04-02 a edu:Standard ; dc:identifier "12현윤04-02" ; dc:subject edu:ModernSocietyEthics ; skos:definition "개인선과 공동선의 조화가 필요한 이유를 설명할 수 있으며, 시민의 정치참여 필요성과 시민불복종의 조건 및 정당성을 제시할 수 있다." .
+edu:ST_12hyunyun04-03 a edu:Standard ; dc:identifier "12현윤04-03" ; dc:subject edu:ModernSocietyEthics ; skos:definition "공정한 분배를 이루기 위한 정책을 분배 정의 이론을 통해 비판 또는 정당화할 수 있으며, 사형 제도와 형벌을 교정적 정의의 관점에서 비판 또는 정당화할 수 있다." .
+edu:ST_12hyunyun05-01 a edu:Standard ; dc:identifier "12현윤05-01" ; dc:subject edu:ModernSocietyEthics ; skos:definition "미적 가치와 윤리적 가치를 예술과 도덕의 관계 차원에서 설명할 수 있으며 현대의 대중문화의 순기능과 역기능을 윤리적 관점에서 이해하고 성찰할 수 있다." .
+edu:ST_12hyunyun05-02 a edu:Standard ; dc:identifier "12현윤05-02" ; dc:subject edu:ModernSocietyEthics ; skos:definition "의식주 생활과 관련된 윤리 문제와 경제생활에서 발생하는 도덕적 선과 이윤 추구 사이의 갈등 및 소비문화의 문제점을 윤리적 관점에서 비판할 수 있다." .
+edu:ST_12hyunyun05-03 a edu:Standard ; dc:identifier "12현윤05-03" ; dc:subject edu:ModernSocietyEthics ; skos:definition "다문화 이론을 통해 문화의 다양성을 존중해야 할 필요성을 인식하고 종교 갈등, 이주민 차별 등과 같은 다문화 관련 문제의 해결 방안을 제시할 수 있다." .
+edu:ST_12hyunyun06-01 a edu:Standard ; dc:identifier "12현윤06-01" ; dc:subject edu:ModernSocietyEthics ; skos:definition "다양한 사회적 갈등의 양상을 제시하고 동⋅서양의 윤리 이론을 바탕으로 사회통합을 위한 방안을 제안할 수 있으며, 바람직한 소통과 담론을 실천할 수 있다." .
+edu:ST_12hyunyun06-02 a edu:Standard ; dc:identifier "12현윤06-02" ; dc:subject edu:ModernSocietyEthics ; skos:definition "한반도의 통일과 평화에 관한 쟁점을 객관적으로 이해하고, 보편적인 윤리적 가치를 바탕으로 남북한의 화해를 위한 개인적⋅국가적 노력을 구체적으로 제시할 수 있다." .
+edu:ST_12hyunyun06-03 a edu:Standard ; dc:identifier "12현윤06-03" ; dc:subject edu:ModernSocietyEthics ; skos:definition "국제 사회의 윤리 문제를 국제 정의의 관점에서 비판적으로 설명하고, 국제 사회에 대한 책임과 기여를 윤리적 관점에서 정당화하고 실천 방안을 제시할 수 있다." .
+
+# --- 고등학교 윤리와 사상 (12윤사) ---
+edu:ST_12yunsa01-01 a edu:Standard ; dc:identifier "12윤사01-01" ; dc:subject edu:EthicsAndThought ; skos:definition "공자사상에 바탕하여 맹자와 순자, 주희와 왕수인의 인성론을 비교하고, 인간 본성의 입장에 따른 윤리적 삶의 목표 및 방법론의 차이와 그 의의를 파악할 수 있다." .
+edu:ST_12yunsa01-02 a edu:Standard ; dc:identifier "12윤사01-02" ; dc:subject edu:EthicsAndThought ; skos:definition "노자의 유무상생⋅무위자연 사상과 장자의 소요유⋅제물론의 의의를 이해하고, 서로 다른 것들 간의 어울림을 통한 진정한 평화에 대해 성찰할 수 있다." .
+edu:ST_12yunsa01-03 a edu:Standard ; dc:identifier "12윤사01-03" ; dc:subject edu:EthicsAndThought ; skos:definition "불교의 사성제와 자비를 이해하고, 괴로움을 극복하는 방법을 실천할 수 있다." .
+edu:ST_12yunsa02-01 a edu:Standard ; dc:identifier "12윤사02-01" ; dc:subject edu:EthicsAndThought ; skos:definition "원효의 화쟁사상, 의천과 지눌의 선⋅교 통합 사상이 불교의 대립을 어떻게 화해시켰는지 탐구하고, 한국불교의 특성과 통합정신의 중요성을 파악할 수 있다." .
+edu:ST_12yunsa02-02 a edu:Standard ; dc:identifier "12윤사02-02" ; dc:subject edu:EthicsAndThought ; skos:definition "도덕 감정의 발현 과정에 대한 퇴계와 율곡의 주장을 그 이유와 함께 비교⋅고찰하고, 일상의 감정을 도덕적으로 조절하는 방법을 제시할 수 있다." .
+edu:ST_12yunsa02-03 a edu:Standard ; dc:identifier "12윤사02-03" ; dc:subject edu:EthicsAndThought ; skos:definition "남명과 하곡, 다산의 사상을 통해 앎과 함의 관계에 대하여 성찰하고, 윤리적 실천 방안을 제안하여 실행할 수 있다." .
+edu:ST_12yunsa03-01 a edu:Standard ; dc:identifier "12윤사03-01" ; dc:subject edu:EthicsAndThought ; skos:definition "서양 윤리사상의 출발점에서 나타난 보편윤리, 영혼의 조화, 성품의 탁월성의 특징을 파악하고, 덕과 행복의 관계에 대하여 성찰할 수 있다." .
+edu:ST_12yunsa03-02 a edu:Standard ; dc:identifier "12윤사03-02" ; dc:subject edu:EthicsAndThought ; skos:definition "행복 추구에 대한 쾌락주의와 금욕주의의 입장을 비교하여 고찰하고, 진정한 행복을 위한 윤리적 실천 방법을 제시할 수 있다." .
+edu:ST_12yunsa03-03 a edu:Standard ; dc:identifier "12윤사03-03" ; dc:subject edu:EthicsAndThought ; skos:definition "그리스도교의 사랑의 윤리로서의 특징을 파악하고, 자연법 윤리 및 프로테스탄티즘 윤리에 나타난 신앙과 윤리의 관계를 성찰할 수 있다." .
+edu:ST_12yunsa03-04 a edu:Standard ; dc:identifier "12윤사03-04" ; dc:subject edu:EthicsAndThought ; skos:definition "옳고 그름의 기준에 대한 의무론과 결과론을 비교⋅분석하고, 옳고 그름에 대한 윤리적 관점을 정당화할 수 있다." .
+edu:ST_12yunsa03-05 a edu:Standard ; dc:identifier "12윤사03-05" ; dc:subject edu:EthicsAndThought ; skos:definition "실존주의와 실용주의, 도덕의 기원과 판단에 관한 과학적 탐구를 비판적으로 평가하고, 책임⋅배려 윤리에 대한 이해를 바탕으로 윤리적 삶의 의미와 지향을 설정할 수 있다." .
+edu:ST_12yunsa04-01 a edu:Standard ; dc:identifier "12윤사04-01" ; dc:subject edu:EthicsAndThought ; skos:definition "동⋅서양의 다양한 국가관을 비교⋅고찰하고, 오늘날의 관점에서 국가의 역할과 정당성에 대한 체계적인 시각을 형성할 수 있다." .
+edu:ST_12yunsa04-02 a edu:Standard ; dc:identifier "12윤사04-02" ; dc:subject edu:EthicsAndThought ; skos:definition "시민의 자유와 권리, 공적 삶과 정치참여에 대한 자유주의와 공화주의의 관점을 비교⋅고찰하고, 시민과 공동체의 바람직한 관계를 모색할 수 있다." .
+edu:ST_12yunsa04-03 a edu:Standard ; dc:identifier "12윤사04-03" ; dc:subject edu:EthicsAndThought ; skos:definition "근대 대의민주주의의 대안으로 등장한 참여민주주의와 심의민주주의의 장단점을 분석하고, 민주주의의 이상을 구현하기 위한 실천 방법을 제시할 수 있다." .
+edu:ST_12yunsa04-04 a edu:Standard ; dc:identifier "12윤사04-04" ; dc:subject edu:EthicsAndThought ; skos:definition "자본주의의 현실적 기여와 한계에 대해 조사⋅분석하고, 동⋅서양의 사회사상적 측면에서 자본주의의 개선 방향에 관해 탐구할 수 있다." .
+
+# --- 고등학교 인문학과 윤리 (12인윤) ---
+edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; dc:subject edu:HumanitiesEthics ; skos:definition "내 몸과 마음의 관계를 탐구하고, 심신의 통합성을 자각하여 도덕적 주체로서 자신을 이해하고 존중할 수 있다." .
+edu:ST_12inyun01-02 a edu:Standard ; dc:identifier "12인윤01-02" ; dc:subject edu:HumanitiesEthics ; skos:definition "삶의 주체인 나에 대한 성찰을 바탕으로 고통과 쾌락의 근원 및 양상을 탐구하여, 고통과 쾌락에 지혜롭게 대처하는 자세를 갖출 수 있다." .
+edu:ST_12inyun02-01 a edu:Standard ; dc:identifier "12인윤02-01" ; dc:subject edu:HumanitiesEthics ; skos:definition "관계 속에서 살아가는 나에 대한 성찰을 통해 상호성을 만끽하는 삶을 모색하고 실천할 수 있다." .
+edu:ST_12inyun02-02 a edu:Standard ; dc:identifier "12인윤02-02" ; dc:subject edu:HumanitiesEthics ; skos:definition "우정과 사랑의 의미를 탐구하고, 행복한 삶의 기반인 진정한 우정과 참된 사랑의 관계를 형성하기 위해 노력할 수 있다." .
+edu:ST_12inyun03-01 a edu:Standard ; dc:identifier "12인윤03-01" ; dc:subject edu:HumanitiesEthics ; skos:definition "동⋅서양에서 바라보는 자유와 평등의 의미와 근거를 알고, 자유롭고 평등한 사람의 모습을 탐구하여 책임 있는 삶의 자세를 추구할 수 있다." .
+edu:ST_12inyun03-02 a edu:Standard ; dc:identifier "12인윤03-02" ; dc:subject edu:HumanitiesEthics ; skos:definition "불평등이 발생하는 원인 및 실질적 기회균등을 구현하기 위한 조건을 탐구하여, 자유롭고 평등한 삶을 위한 정의의 원칙을 도출할 수 있다." .
+edu:ST_12inyun04-01 a edu:Standard ; dc:identifier "12인윤04-01" ; dc:subject edu:HumanitiesEthics ; skos:definition "서로 다른 의견들이 발생하고 충돌하는 양상과 이유를 파악하고, 민주적인 방식으로 다양한 의견을 포용하는 방법과 절차를 모색하여 실천할 수 있다." .
+edu:ST_12inyun04-02 a edu:Standard ; dc:identifier "12인윤04-02" ; dc:subject edu:HumanitiesEthics ; skos:definition "가상세계와 현실세계의 같고 다른 점이 무엇인지 탐구하고, 가상세계에서도 자신과 타인을 존중하는 자세를 갖출 수 있다." .
+edu:ST_12inyun05-01 a edu:Standard ; dc:identifier "12인윤05-01" ; dc:subject edu:HumanitiesEthics ; skos:definition "자아실현과 직업생활의 상호성을 이해하고, 삶의 방식으로서 소유와 존재의 의미를 탐구하여 나와 타인의 이익을 조화롭게 추구하는 삶의 태도를 함양할 수 있다." .
+edu:ST_12inyun05-02 a edu:Standard ; dc:identifier "12인윤05-02" ; dc:subject edu:HumanitiesEthics ; skos:definition "기후위기 문제를 비판적으로 인식하고, 지속가능한 삶을 위해 인간과 자연에 대한 이분법적 관점을 넘어선 상생의 원칙들을 수립하여 일상에서 실천할 수 있다." .
+edu:ST_12inyun06-01 a edu:Standard ; dc:identifier "12인윤06-01" ; dc:subject edu:HumanitiesEthics ; skos:definition "인간의 불완전성에 대한 성찰을 바탕으로 불안한 현대사회를 살아가는 데 있어 종교의 역할과 가치를 탐구하여, 종교에 대한 바람직한 관점을 정립할 수 있다." .
+edu:ST_12inyun06-02 a edu:Standard ; dc:identifier "12인윤06-02" ; dc:subject edu:HumanitiesEthics ; skos:definition "인생의 유한성을 자각하고, 자아에 대한 성찰 및 다양한 가치 탐색을 통하여 내 삶의 의미를 묻고 답을 찾아가는 도덕적 주체로서 살아갈 수 있다." .

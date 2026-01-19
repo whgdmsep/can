@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>도덕과 교육과정 - Knowledge Universe</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* Background & UI */
+            --bg-color: #1A1C2E;
+            --panel-bg: rgba(26, 28, 46, 0.95);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+
+            /* Vivid Node Colors */
+            --root-color: #ffffff;
+            --area-1: #FF007F;
+            /* Vivid Rose */
+            --area-2: #FFFF00;
+            /* Vivid Yellow */
+            --area-3: #00FFFF;
+            /* Vivid Cyan */
+            --area-4: #BF00FF;
+            /* Vivid Purple */
+
+            /* Volume Colors for badges/accents */
+            --vol-1: #38bdf8;
+            --vol-2: #f87171;
+
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* Changed for Tab Layout */
+        }
+
+        /* --- TABS --- */
+        .main-tabs {
+            height: 50px;
+            background: #151725;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 10px;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-item.active {
+            color: var(--vol-1);
+            border-bottom-color: var(--vol-1);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        /* --- VIEWS --- */
+        .main-view {
+            flex: 1;
+            display: none;
+            overflow: hidden;
+            width: 100%;
+            height: calc(100vh - 50px);
+        }
+
+        .main-view.active {
+            display: flex;
+        }
+
+        /* --- PLAN TABLES --- */
+        .plan-container {
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            background: var(--bg-color);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .paper {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            color: #000;
+            padding: 50px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .paper h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            color: #000;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #000;
+            padding: 10px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .data-table th {
+            background: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            word-break: keep-all;
+        }
+
+        .action-bar {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: var(--vol-1);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        #graph-container {
+            width: 60%;
+            height: 100%;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, #2a2d45 0%, #1A1C2E 80%);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .graph-header {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .graph-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .graph-header p {
+            margin: 5px 0 0;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- RIGHT: LIST AREA (40%) --- */
+        #list-container {
+            width: 40%;
+            height: 100%;
+            background: var(--panel-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .list-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(40, 44, 65, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--vol-1);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--vol-1);
+            color: #1A1C2E;
+            font-weight: 700;
+            border-color: var(--vol-1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* --- TOOLTIP --- */
+        #graph-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid #FFD700;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 350px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+            display: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        #graph-tooltip .tooltip-code {
+            font-weight: 800;
+            color: #FFD700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        #graph-tooltip .tooltip-def {
+            color: #e2e8f0;
+            word-break: keep-all;
+        }
+
+        #result-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        #result-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #result-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+
+        /* --- BASKET AREA --- */
+        #basket-area {
+            height: 250px;
+            background: rgba(15, 17, 26, 0.98);
+            border-top: 1px solid var(--vol-1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 30;
+        }
+
+        .basket-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #basket-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px;
+        }
+
+        #basket-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #basket-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .basket-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 14px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+        }
+
+        .basket-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--vol-1);
+            transform: translateX(3px);
+        }
+
+        .b-code {
+            font-weight: 700;
+            color: var(--vol-1);
+            margin-right: 8px;
+        }
+
+        .b-del {
+            color: #ef4444;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: bg 0.2s;
+        }
+
+        .b-del:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 22px;
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            transform: translateY(-3px);
+            border-color: var(--vol-1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-code {
+            font-weight: 800;
+            color: var(--vol-1);
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+        }
+
+        .card-vol {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #d1d5db;
+            font-weight: 600;
+        }
+
+        .card-def {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            margin-bottom: 16px;
+            word-break: keep-all;
+        }
+
+        .card-res {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 14px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+            color: #c7d2fe;
+            flex-wrap: wrap;
+        }
+
+        .float-controls {
+            position: absolute;
+            bottom: 270px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 20;
+        }
+
+        .f-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #fff;
+            color: #1A1C2E;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .f-btn:hover {
+            transform: scale(1.15);
+            background: var(--vol-1);
+            color: #fff;
+        }
+
+        .hl {
+            background: rgba(56, 189, 248, 0.3);
+            color: white;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .media-badge {
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            color: #0f172a;
+            font-weight: 800;
+            margin-left: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            #graph-container {
+                width: 100%;
+                height: 45vh;
+            }
+
+            #list-container {
+                width: 100%;
+                height: 55vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="main-tabs">
+        <div class="tab-item active" onclick="switchTab('explore')">지식 탐험</div>
+        <div class="tab-item" onclick="switchTab('lesson')">수업 계획서</div>
+        <div class="tab-item" onclick="switchTab('assessment')">평가 계획서</div>
+    </nav>
+
+    <!-- VIEW 1: EXPLORE -->
+    <div id="view-explore" class="main-view active">
+
+        <div id="graph-container">
+            <div class="graph-header">
+                <h1>지식의 우주</h1>
+                <p>Moral Knowledge Graph</p>
+            </div>
+            <div id="graph-tooltip"></div>
+            <!-- D3 SVG appended here -->
+        </div>
+
+        <div id="list-container">
+            <div class="list-header">
+                <div class="search-box">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="성취기준 검색 (예: 행복, 정의, 통일)"
+                        onkeyup="handleSearchInput()">
+                </div>
+                <div class="filters">
+                    <button class="filter-btn active" onclick="setFilter('All')">전체</button>
+                    <button class="filter-btn" onclick="setFilter('도덕 1')">도덕 1</button>
+                    <button class="filter-btn" onclick="setFilter('도덕 2')">도덕 2</button>
+                    <button class="filter-btn" onclick="setFilter('HS')">고등학교</button>
+                </div>
+            </div>
+
+            <div id="result-area">
+                <!-- Cards go here -->
+            </div>
+
+            <div class="float-controls">
+                <button class="f-btn" onclick="listScroll('top')" title="맨 위로"><i data-lucide="arrow-up"></i></button>
+                <button class="f-btn" onclick="listScroll('bottom')" title="맨 아래로"><i
+                        data-lucide="arrow-down"></i></button>
+            </div>
+
+            <div id="basket-area">
+                <div class="basket-title">
+                    <span><i data-lucide="shopping-bag" style="vertical-align:text-bottom; margin-right:8px;"></i> 수업
+                        바구니</span>
+                    <span id="basket-count"
+                        style="background:var(--vol-1); padding:2px 8px; border-radius:12px; font-size:0.8rem; color:#1A1C2E;">0</span>
+                </div>
+                <div id="basket-list">
+                    <div style="text-align:center; color:#64748b; margin-top:20px; font-size:0.9rem;">성취기준 노드를 클릭해 담으세요.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: LESSON PLAN -->
+    <div id="view-lesson" class="main-view" style="display:none; flex-direction:column;">
+        <div class="plan-container">
+            <button class="close-btn" onclick="switchTab('explore')"
+                style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
+                    data-lucide="x"></i> 그래프로 돌아가기</button>
+            <div class="action-bar">
+                <button class="action-btn" onclick="copyTable('lesson-table')"><i data-lucide="copy"></i> 표 양식
+                    복사하기</button>
+                <button class="action-btn" onclick="downloadExcel()"><i data-lucide="download"></i> 엑셀 파일로 내려받기</button>
+            </div>
+            <div class="paper">
+                <h2>수업 계획서</h2>
+                <table id="lesson-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th width="8%">월</th>
+                            <th width="8%">주</th>
+                            <th width="20%">단원명</th>
+                            <th width="30%">성취기준</th>
+                            <th width="17%">교수·학습 방법</th>
+                            <th width="17%">평가 계획</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: ASSESSMENT PLAN -->
+    <div id="view-assessment" class="main-view" style="display:none; flex-direction:column;">
+        <div class="plan-container">
+            <button class="close-btn" onclick="switchTab('explore')"
+                style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
+                    data-lucide="x"></i> 그래프로 돌아가기</button>
+            <div class="action-bar">
+                <button class="action-btn" onclick="copyTable('assessment-table')"><i data-lucide="copy"></i> 표 양식
+                    복사하기</button>
+                <button class="action-btn" onclick="downloadExcel()"><i data-lucide="download"></i> 엑셀 파일로 내려받기</button>
+            </div>
+            <div class="paper">
+                <h2>평가 계획서</h2>
+                <table id="assessment-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th width="15%">평가 영역</th>
+                            <th width="15%">핵심 역량</th>
+                            <th width="30%">성취기준</th>
+                            <th width="20%">수행 과제</th>
+                            <th width="20%">채점 기준</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const ttlData = `
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix edu: <http://library.school.go.kr/metadata/curriculum/> .
+@prefix res: <http://library.school.go.kr/resource/> .
+
+# --- Subject Nodes ---
+edu:MiddleSchoolEthics a skos:Concept ; skos:prefLabel "중학교 도덕" .
+
+# --- Standards ---
+# [자신과의 관계]
+edu:ST_9do01-01 a edu:Standard ; dc:identifier "9도01-01" ; edu:volume "도덕 1" ; skos:definition "자신의 삶과 가치관에 대한 성찰을 통해 자아를 올바로 이해하고, 삶에서 도덕이 필요한 이유에 근거하여 도덕적인 삶에 대한 의지를 기른다." ; edu:recommendedResource res:Book_SuperTurtle .
+edu:ST_9do01-02 a edu:Standard ; dc:identifier "9도01-02" ; edu:volume "도덕 1" ; skos:definition "일상에서 발생하는 부도덕한 행동의 여러 원인을 분석하고, 도덕적 인격이 갖추어야 할 특성들을 파악하여 이를 내면화하는 의지를 기른다." ; edu:recommendedResource res:Book_GoldenSlumber .
+edu:ST_9do01-03 a edu:Standard ; dc:identifier "9도01-03" ; edu:volume "도덕 1" ; skos:definition "행복에 관한 심리적, 사회적, 윤리적 접근 등을 통해 행복의 의미를 종합적으로 파악하고, 삶의 목적과 행복의 관계를 정립할 수 있다." ; edu:recommendedResource res:Movie_HectorHappiness .
+edu:ST_9do01-04 a edu:Standard ; dc:identifier "9도01-04" ; edu:volume "도덕 2" ; skos:definition "옳고 그름을 분별할 수 있는 도덕적 기준을 탐구하고, 도덕적 상상력을 바탕으로 일상의 도덕 문제들에 도덕적 추론을 적용할 수 있다." ; edu:recommendedResource res:Book_JusticeForYouth .
+edu:ST_9do01-05 a edu:Standard ; dc:identifier "9도01-05" ; edu:volume "도덕 2" ; skos:definition "삶의 유한함에 관한 성찰을 통해 생명의 소중함과 의미 있는 삶의 중요성을 인식하고, 자신의 미래 모습을 상상하며 삶을 계획하고 이를 실천하는 의지를 기른다." ; edu:recommendedResource res:Book_TuesdaysWithMorrie .
+edu:ST_9do01-06 a edu:Standard ; dc:identifier "9도01-06" ; edu:volume "도덕 2" ; skos:definition "내면에 대한 성찰을 통해 심리적 고통과 불안, 우울감 등의 원인을 찾고, 마음의 평온을 얻을 수 있는 방안들을 다각적으로 모색하여 실천할 수 있다." ; edu:recommendedResource res:Book_MindManagement .
+edu:ST_9do01-07 a edu:Standard ; dc:identifier "9도01-07" ; edu:volume "도덕 2" ; skos:definition "삶에서 직업이 갖는 의미와 가치를 파악하며, 사례 탐구를 통해 직업적 양심과 직업윤리의 필요성을 정당화할 수 있다." ; edu:recommendedResource res:Movie_Hudsucker .
+
+# [타인과의 관계]
+edu:ST_9do02-01 a edu:Standard ; dc:identifier "9도02-01" ; edu:volume "도덕 1" ; skos:definition "정서적, 배려적 공동체로서 가정의 특성과 도덕적 기능을 파악하고, 가정에서 발생하는 갈등을 공감적인 소통과 민주적인 과정을 통해 해소하는 의지를 기른다." ; edu:recommendedResource res:Movie_InsideOut .
+edu:ST_9do02-02 a edu:Standard ; dc:identifier "9도02-02" ; edu:volume "도덕 1" ; skos:definition "친구의 의미와 가치를 삶의 맥락 속에서 탐구하고, 서로를 인격적으로 존중하는 친구 관계를 상상하며 이를 실현하는 의지를 기른다." ; edu:recommendedResource res:Book_FriendLegend .
+edu:ST_9do02-03 a edu:Standard ; dc:identifier "9도02-03" ; edu:volume "도덕 1" ; skos:definition "가상공간과 현실 세계에 대한 비교⋅분석을 바탕으로 가상공간에서 발생하는 도덕 문제들의 원인과 해결 방안을 제안하고, 타인을 존중하며 가상공간을 활용하는 태도를 함양한다." ; edu:recommendedResource res:Docu_SocialDilemma .
+edu:ST_9do02-04 a edu:Standard ; dc:identifier "9도02-04" ; edu:volume "도덕 2" ; skos:definition "인간을 관계적 존재로 해석할 수 있는 이유에 근거하여 타인과의 관계에서 필요한 가치⋅덕목을 탐구하고, 타인의 생각과 감정에 공감하는 태도를 기른다." ; edu:recommendedResource res:Book_Wonder .
+edu:ST_9do02-05 a edu:Standard ; dc:identifier "9도02-05" ; edu:volume "도덕 2" ; skos:definition "다양한 갈등 상황을 평화적으로 해결할 수 있는 방안을 모색하고, 폭력의 유형과 원인, 결과에 대한 분석을 바탕으로 일상의 폭력 상황에 대한 대처 능력을 기른다." ; edu:recommendedResource res:Book_Piggybook .
+edu:ST_9do02-06 a edu:Standard ; dc:identifier "9도02-06" ; edu:volume "도덕 2" ; skos:definition "청소년기의 바람직한 성윤리를 탐구하여 내면화하고, 사회⋅문화적 차원에서 성의 의미를 파악하여 성에 대한 편견의 문제점을 분석하고 이를 바로잡는 의지를 기른다." ; edu:recommendedResource res:Book_PaperBagPrincess .
+
+# [사회·국가·지구 공동체]
+edu:ST_9do03-01 a edu:Standard ; dc:identifier "9도03-01" ; edu:volume "도덕 1" ; skos:definition "인권을 존중해야 하는 도덕적 이유를 정당화하고, 인권 침해 사례에 대한 탐구를 통해 그 원인과 해결 방안을 도출함으로써 인권 감수성을 기른다." ; edu:recommendedResource res:Book_HumanRights .
+edu:ST_9do03-02 a edu:Standard ; dc:identifier "9도03-02" ; edu:volume "도덕 1" ; skos:definition "외집단에 대한 편견을 비판적으로 분석하고, 타문화⋅타종교⋅타인종을 존중해야 하는 이유에 근거하여 차이와 다양성에 대한 열린 마음을 기른다." ; edu:recommendedResource res:Book_TrueStoryWolf .
+edu:ST_9do03-03 a edu:Standard ; dc:identifier "9도03-03" ; edu:volume "도덕 1" ; skos:definition "북한에 대한 이해를 바탕으로 분단의 문제점을 분석하고, 도덕적 가치에 기초하여 통일의 의미를 재구성함으로써 바람직한 남북관계 및 통일의 방향을 제안할 수 있다." ; edu:recommendedResource res:Movie_AsOne .
+edu:ST_9do03-04 a edu:Standard ; dc:identifier "9도03-04" ; edu:volume "도덕 2" ; skos:definition "정의로운 사회를 상상해보고, 이를 실현할 수 있는 정의의 원칙과 제도에 대한 다양한 의견들을 민주적인 방식으로 종합할 수 있다." ; edu:recommendedResource res:Book_JusticeForKids .
+edu:ST_9do03-05 a edu:Standard ; dc:identifier "9도03-05" ; edu:volume "도덕 2" ; skos:definition "국가와 시민 사이에서 발생하는 윤리적 쟁점들을 탐구하고, 국가와 시민 사이의 바람직한 관계에 기초하여 국가와 시민의 역할을 재구성할 수 있다." ; edu:recommendedResource res:Movie_TheAttorney .
+edu:ST_9do03-06 a edu:Standard ; dc:identifier "9도03-06" ; edu:volume "도덕 2" ; skos:definition "인류의 고통에 공감하며 지구적 차원의 다양한 도덕 문제들을 탐구하고, 해결 방안을 모색하여 실천하는 자세를 갖는다." ; edu:recommendedResource res:Docu_Anthropocene .
+edu:ST_9do03-07 a edu:Standard ; dc:identifier "9도03-07" ; edu:volume "도덕 2" ; skos:definition "현대 과학기술과 관련된 윤리적 쟁점의 분석을 통해 과학기술의 유용성과 한계를 인식하고, 과학기술의 바람직한 활용에 관한 관심과 책임 의식을 기른다." ; edu:recommendedResource res:Book_BraveNewWorld .
+
+# [자연·초월과의 관계]
+edu:ST_9do04-01 a edu:Standard ; dc:identifier "9도04-01" ; edu:volume "도덕 1" ; skos:definition "인간 이외의 생명체를 도덕적으로 고려해야 하는 이유를 정당화하고, 생명을 가진 존재들이 겪는 고통에 공감하며 생명을 소중히 여기는 태도를 기른다." ; edu:recommendedResource res:Book_LifeRespect .
+edu:ST_9do04-02 a edu:Standard ; dc:identifier "9도04-02" ; edu:volume "도덕 2" ; skos:definition "자연에 대한 동양과 서양의 주요 입장들을 토대로 인간과 자연의 바람직한 관계를 도출하고, 환경 위기에 대한 윤리적 책임을 구체화하여 실천할 수 있다." ; edu:recommendedResource res:Movie_Mononoke .
+
+# --- Resources with Media Tags ---
+res:Book_SuperTurtle a edu:LearningResource ; dc:title "슈퍼 거북" ; edu:mediaTag "그림책" .
+res:Book_GoldenSlumber a edu:LearningResource ; dc:title "골든 슬럼버" ; edu:mediaTag "소설" .
+res:Movie_HectorHappiness a edu:LearningResource ; dc:title "꾸뻬 씨의 행복여행" ; edu:mediaTag "영화" .
+res:Book_JusticeForYouth a edu:LearningResource ; dc:title "정의란 무엇인가(청소년)" ; edu:mediaTag "인문" .
+res:Book_TuesdaysWithMorrie a edu:LearningResource ; dc:title "모리와 함께한 화요일" ; edu:mediaTag "에세이" .
+res:Book_MindManagement a edu:LearningResource ; dc:title "기분을 관리하면 인생이 관리된다" ; edu:mediaTag "에세이" .
+res:Movie_Hudsucker a edu:LearningResource ; dc:title "허드서커 대리인" ; edu:mediaTag "영화" .
+res:Movie_InsideOut a edu:LearningResource ; dc:title "인사이드 아웃" ; edu:mediaTag "애니메이션" .
+res:Book_FriendLegend a edu:LearningResource ; dc:title "친구의 전설" ; edu:mediaTag "그림책" .
+res:Docu_SocialDilemma a edu:LearningResource ; dc:title "소셜 딜레마" ; edu:mediaTag "다큐" .
+res:Book_Wonder a edu:LearningResource ; dc:title "원더" ; edu:mediaTag "소설" .
+res:Book_Piggybook a edu:LearningResource ; dc:title "돼지책" ; edu:mediaTag "그림책" .
+res:Book_PaperBagPrincess a edu:LearningResource ; dc:title "종이 봉지 공주" ; edu:mediaTag "그림책" .
+res:Book_HumanRights a edu:LearningResource ; dc:title "무기력한 인권은 가라" ; edu:mediaTag "인문" .
+res:Book_TrueStoryWolf a edu:LearningResource ; dc:title "늑대가 들려주는 아기 돼지 삼형제" ; edu:mediaTag "그림책" .
+res:Movie_AsOne a edu:LearningResource ; dc:title "코리아" ; edu:mediaTag "영화" .
+res:Book_JusticeForKids a edu:LearningResource ; dc:title "어린이를 위한 정의란 무엇인가" ; edu:mediaTag "인문" .
+res:Movie_TheAttorney a edu:LearningResource ; dc:title "변호인" ; edu:mediaTag "영화" .
+res:Docu_Anthropocene a edu:LearningResource ; dc:title "인류세" ; edu:mediaTag "다큐" .
+res:Book_BraveNewWorld a edu:LearningResource ; dc:title "멋진 신세계" ; edu:mediaTag "소설" .
+res:Book_LifeRespect a edu:LearningResource ; dc:title "살아있는 모든 것들에 대한 예의" ; edu:mediaTag "인문" .
+res:Movie_Mononoke a edu:LearningResource ; dc:title "모노노케 히메" ; edu:mediaTag "애니메이션" .
+
+# --- High School (Snippet for search only) ---
+edu:ST_12hyunyun01-01 a edu:Standard ; dc:identifier "12현윤01-01" ; edu:volume "고교" ; skos:definition "윤리학의 성격과 특징을 바탕으로 윤리적 존재로서의 인간 본성을 이해하고, 현대사회의 다양한 윤리 문제를 탐구 및 토론할 수 있다." .
+edu:ST_12yunsa01-01 a edu:Standard ; dc:identifier "12윤사01-01" ; edu:volume "고교" ; skos:definition "공자사상에 바탕하여 맹자와 순자, 주희와 왕수인의 인성론을 비교하고, 인간 본성의 입장에 따른 윤리적 삶의 목표 및 방법론의 차이와 그 의의를 파악할 수 있다." .
+edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume "고교" ; skos:definition "내 몸과 마음의 관계를 탐구하고, 심신의 통합성을 자각하여 도덕적 주체로서 자신을 이해하고 존중할 수 있다." .
+`;
+
+        const AREA_MAP = {
+            '01': { id: 'Area_1', label: '자신', fullName: 'I. 자신과의 관계', color: '#FF007F', competencies: ['자기성찰·계발 역량'] },
+            '02': { id: 'Area_2', label: '타인', fullName: 'II. 타인과의 관계', color: '#FFFF00', competencies: ['도덕적 대인관계 역량'] },
+            '03': { id: 'Area_3', label: '사회', fullName: 'III. 사회공동체와의 관계', color: '#00FFFF', competencies: ['도덕적 사고 역량', '도덕적 공동체 역량'] },
+            '04': { id: 'Area_4', label: '자연', fullName: 'IV. 자연과의 관계', color: '#BF00FF', competencies: ['도덕적 사고 역량', '자기성찰·계발 역럅'] }
+        };
+
+        // 도덕과 핵심 역량 전체 목록
+        const ALL_COMPETENCIES = ['자기성찰·계발 역량', '도덕적 대인관계 역량', '도덕적 사고 역량', '도덕적 공동체 역량'];
+
+        // 평가 계획/유형 전체 목록
+        const ALL_ASSESSMENT_TYPES = ['서술·논술평가', '포트폴리오', '발표', '구술', '자기 평가', '관찰평가', '토의토론'];
+
+        // 교수·학습 방법 및 평가 유형 자동 매핑 함수
+        function suggestMethods(definition) {
+            const methods = [];
+            const assessments = [];
+            let task = '';
+            let rubric = '';
+
+            // A. 분석/비판/평가 → 비판적 논술
+            if (/분석|비판|평가|탐구|비교/.test(definition)) {
+                methods.push('토론·토의');
+                assessments.push('서술·논술평가');
+                assessments.push('토의토론');
+                assessments.push('구술');
+                task = '도덕적 쟁점 비판적 논술 쓰기';
+                rubric = '[상] 주제를 비판적 관점에서 논리적 근거로 명확히 서술함\n[중] 비판적 의견은 있으나 논리적 근거가 다소 부족함\n[하] 주제 파악이 미흡하거나 비판적 서술이 부족함';
+            }
+            // B. 실천/내면화/습득 → 실천 기록장
+            else if (/실천|내면화|습득|함양|기른다|형성/.test(definition)) {
+                methods.push('체험학습');
+                methods.push('프로젝트학습');
+                assessments.push('포트폴리오');
+                assessments.push('관찰평가');
+                assessments.push('자기 평가');
+                task = '생활 밀착형 도덕 실천 기록장';
+                rubric = '[상] 가치를 내면화하여 지속적으로 실천하고 성실히 기록함\n[중] 실천하려 노력하나 지속성이나 기록이 다소 부족함\n[하] 실천 의지가 부족하고 기록 내용이 부실함';
+            }
+            // C. 이해/설명/특징 → 개념 카드뉴스
+            else if (/이해|설명|특징|파악|인식/.test(definition)) {
+                methods.push('강의식');
+                assessments.push('서술·논술평가');
+                task = '핵심 개념 인포그래픽(카드뉴스) 제작';
+                rubric = '[상] 핵심 개념을 정확히 이해하고 창의적으로 구성하여 설명함\n[중] 개념은 이해하고 있으나 설명 방식이 다소 평이함\n[하] 개념 이해가 부족하거나 설명 내용이 미흡함';
+            }
+            // D. 상상/제안/도출 → 해결방안 제안서
+            else if (/상상|제안|도출|모색|구성/.test(definition)) {
+                methods.push('프로젝트학습');
+                assessments.push('발표');
+                assessments.push('구술');
+                task = '도덕적 문제 해결 방안 제안서 작성';
+                rubric = '[상] 문제 상황을 다각도로 분석하고 실현 가능한 대안을 제안함\n[중] 해결 방안을 제시했으나 실현 가능성이 다소 낮음\n[하] 문제 상황을 제대로 파악하지 못하거나 제안이 미흡함';
+            }
+            else {
+                task = '수행 과제명을 입력하세요';
+                rubric = '[상] \n[중] \n[하] ';
+            }
+
+            return {
+                methods: [...new Set(methods)],
+                assessments: [...new Set(assessments)],
+                task,
+                rubric
+            };
+        }
+
+        let allStandards = [];
+        let resourcesMap = {};
+        let currentFilter = 'All';
+        let basket = new Set(); // Stores Standard IDs
+
+        function initData() {
+            // A. Resources with Tags
+            const lines = ttlData.split('\n');
+            lines.forEach(line => {
+                const match = line.match(/^res:([^ ]+) .*?dc:title "([^"]+)"/);
+                if (match) {
+                    const id = 'res:' + match[1];
+                    const title = match[2];
+                    let tag = '';
+                    const tagMatch = line.match(/edu:mediaTag "([^"]+)"/);
+                    if (tagMatch) tag = tagMatch[1];
+                    resourcesMap[id] = { title, tag };
+                }
+            });
+
+            // B. Standards
+            const stdLines = ttlData.split('\n');
+            let currentStd = null;
+
+            stdLines.forEach(line => {
+                line = line.trim();
+                if (!line || line.startsWith('#') || line.startsWith('@prefix')) return;
+
+                if (line.match(/^edu:ST_/)) {
+                    if (currentStd) allStandards.push(currentStd);
+                    currentStd = {
+                        id: line.split(' ')[0],
+                        code: '', volume: '고교', definition: '', resource: '',
+                        areaId: null
+                    };
+                }
+
+                if (currentStd) {
+                    if (line.includes('dc:identifier')) currentStd.code = line.match(/dc:identifier "([^"]+)"/)[1];
+                    if (line.includes('edu:volume')) currentStd.volume = line.match(/edu:volume "([^"]+)"/)[1];
+                    if (line.includes('skos:definition')) currentStd.definition = line.match(/skos:definition "([^"]+)"/)[1];
+                    if (line.includes('edu:recommendedResource')) currentStd.resource = line.match(/edu:recommendedResource (res:[^ ;.]+)/)[1];
+
+                    if (line.endsWith('.')) {
+                        if (currentStd.code.startsWith('9도01')) currentStd.areaId = '01';
+                        else if (currentStd.code.startsWith('9도02')) currentStd.areaId = '02';
+                        else if (currentStd.code.startsWith('9도03')) currentStd.areaId = '03';
+                        else if (currentStd.code.startsWith('9도04')) currentStd.areaId = '04';
+
+                        allStandards.push(currentStd);
+                        currentStd = null;
+                    }
+                }
+            });
+
+            initGraph();
+            renderList();
+        }
+
+        // --- GRAPH LOGIC ---
+        function initGraph() {
+            const container = document.getElementById('graph-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // Nodes (Root > Area > Volume > Standard)
+            // Nodes (Root > Area > Volume > Standard)
+            // Clean Radial Hierarchy: Root=40, Area=25, Volume=15, Standard=5
+            let nodes = [{ id: 'Root', label: '도덕', group: 'root', r: 40, color: '#ffffff', fx: width / 2, fy: height / 2 }];
+            let links = [];
+
+            Object.keys(AREA_MAP).forEach(k => {
+                const area = AREA_MAP[k];
+                nodes.push({ id: area.id, label: area.label, group: 'area', r: 25, color: area.color });
+                links.push({ source: 'Root', target: area.id });
+
+                ['도덕 1', '도덕 2'].forEach(vol => {
+                    const volId = `${area.id}_${vol}`;
+                    const hasItems = allStandards.some(s => s.areaId === k && s.volume === vol);
+                    if (hasItems) {
+                        nodes.push({
+                            id: volId,
+                            label: vol,
+                            group: 'volume',
+                            r: 15,
+                            color: vol === '도덕 1' ? '#38bdf8' : '#f87171',
+                            parentArea: area.id
+                        });
+                        links.push({ source: area.id, target: volId });
+
+                        const stds = allStandards.filter(s => s.areaId === k && s.volume === vol);
+                        stds.forEach(s => {
+                            nodes.push({
+                                id: s.id,
+                                label: s.code,
+                                group: 'standard',
+                                r: 5,
+                                color: area.color,
+                                data: s
+                            });
+                            links.push({ source: volId, target: s.id });
+                        });
+                    }
+                });
+            });
+
+            // Clear previous SVG if any
+            d3.select(container).selectAll('svg').remove();
+
+            const svg = d3.select(container).append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .call(d3.zoom().scaleExtent([0.1, 4]).on('zoom', (event) => g.attr('transform', event.transform)));
+
+            const g = svg.append('g');
+
+            const simulation = d3.forceSimulation(nodes)
+                .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+                    if (d.target.group === 'area') return 90;
+                    if (d.target.group === 'volume') return 45; // Prevent overlap (25+15=40 radius sum)
+                    return 18; // Physically touching distance (15+5=20 radius sum). 10 was too tight causing chaos.
+                }).strength(d => d.target.group === 'area' ? 1 : 0.5))
+                .force('charge', d3.forceManyBody().strength(-250))
+                .force('radial', d3.forceRadial(d => d.group === 'area' ? 90 : 0, width / 2, height / 2).strength(d => d.group === 'area' ? 1 : 0))
+                .force('collide', d3.forceCollide().radius(d => {
+                    if (d.group === 'standard') return d.r + 1.5; // Prevent self-tangling (5 + 1.5)
+                    if (d.group === 'volume') return d.r + 5;     // Buffer against Area
+                    return d.r + 10;
+                }).iterations(2)); // More iterations for stability
+
+            const link = g.append('g').selectAll('line')
+                .data(links).join('line')
+                .attr('stroke', '#cbd5e1')
+                .attr('stroke-width', 2)
+                .attr('stroke-opacity', 0.2);
+
+            // Standard Drag - Simplified to allow clicks
+            const dragBehavior = d3.drag()
+                .on('start', (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                })
+                .on('drag', (event, d) => {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                })
+                .on('end', (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                });
+
+            const node = g.append('g').selectAll('.node')
+                .data(nodes).join('g')
+                .attr('class', 'node')
+                .call(dragBehavior);
+
+            // Node Circles with Glow Border
+            node.append('circle')
+                .attr('r', d => d.r)
+                .attr('fill', d => d.color)
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 3)
+                .attr('fill-opacity', d => d.group === 'standard' ? 0.9 : 1)
+                .style('filter', 'drop-shadow(0 0 8px rgba(255,255,255,0.8)) drop-shadow(0 0 15px rgba(255,255,255,0.4))');
+
+            // Text Labels (Optimized for readability)
+            node.append('text')
+                .text(d => d.group === 'standard' ? '' : d.label)
+                .attr('dy', d => d.group === 'area' ? '2.8em' : (d.group === 'volume' ? '2em' : '0.35em'))
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#fff')
+                .attr('font-weight', '700')
+                .attr('font-size', d => d.group === 'root' ? '18px' : (d.group === 'area' ? '15px' : '10px'))
+                .style('pointer-events', 'none')
+                .style('text-shadow', '0 2px 4px rgba(0,0,0,0.8)');
+
+            // --- INTERACTIONS ---
+            const tooltip = d3.select('#graph-tooltip');
+
+            node.on('mouseover', (event, d) => {
+                const neighbors = new Set([d.id]);
+                links.forEach(l => {
+                    if (l.source.id === d.id) neighbors.add(l.target.id);
+                    if (l.target.id === d.id) neighbors.add(l.source.id);
+                });
+
+                // Focus Effect
+                node.transition().duration(200).style('opacity', n => neighbors.has(n.id) ? 1 : 0.1);
+                link.transition().duration(200).style('stroke-opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.05);
+
+                if (d.group === 'standard') {
+                    // Show tooltip
+                    tooltip.style('display', 'block')
+                        .html(`
+                            <div class="tooltip-code">[${d.data.code}]</div>
+                            <div class="tooltip-def">${d.data.definition}</div>
+                        `);
+
+                    // Visual feedback on hover
+                    if (basket.has(d.id)) {
+                        d3.select(event.currentTarget).select('circle').attr('stroke', '#FFD700').attr('stroke-opacity', 1);
+                    } else {
+                        d3.select(event.currentTarget).select('circle').attr('stroke', '#FFD700').attr('stroke-width', 3);
+                    }
+                }
+            })
+                .on('mousemove', (event, d) => {
+                    if (d.group === 'standard') {
+                        // Position tooltip near mouse
+                        tooltip
+                            .style('left', (event.pageX + 15) + 'px')
+                            .style('top', (event.pageY - 10) + 'px');
+                    }
+                })
+                .on('mouseout', (event, d) => {
+                    node.transition().duration(200).style('opacity', 1);
+                    link.transition().duration(200).style('stroke-opacity', 0.2);
+
+                    if (d.group === 'standard') {
+                        // Hide tooltip
+                        tooltip.style('display', 'none');
+
+                        // Restore selection state
+                        if (basket.has(d.id)) {
+                            d3.select(event.currentTarget).select('circle').attr('stroke', '#FFD700').attr('stroke-opacity', 1).attr('stroke-width', 4);
+                        } else {
+                            d3.select(event.currentTarget).select('circle').attr('stroke', '#fff').attr('stroke-width', 3);
+                        }
+                    }
+                })
+                .on('click', (event, d) => {
+                    // Click Logic - Direct execution without checks
+                    let keyword = '';
+                    if (d.group === 'standard') {
+                        console.log('Clicked standard:', d.id);
+                        // 1. Toggle Selection (Basket)
+                        if (basket.has(d.id)) {
+                            basket.delete(d.id);
+                            d3.select(event.currentTarget).select('circle').attr('stroke', '#fff').attr('stroke-width', 3);
+                        } else {
+                            basket.add(d.id);
+                            d3.select(event.currentTarget).select('circle').attr('stroke', '#FFD700').attr('stroke-width', 4).attr('stroke-opacity', 1); // Yellow Highlight
+                        }
+                        renderBasket();
+
+                        // 2. Search linked
+                        keyword = d.data.code;
+                        const input = document.getElementById('searchInput');
+                        if (input) {
+                            input.value = keyword;
+                            handleSearchInput();
+                        }
+                    }
+                    else if (d.group === 'volume') {
+                        setFilter(d.label);
+                    } else if (d.group === 'area') {
+                        keyword = d.label;
+                        const input = document.getElementById('searchInput');
+                        if (input) {
+                            input.value = keyword;
+                            handleSearchInput();
+                        }
+                    } else {
+                        setFilter('All');
+                        const input = document.getElementById('searchInput');
+                        if (input) {
+                            input.value = '';
+                            handleSearchInput();
+                        }
+                    }
+                });
+
+            simulation.on('tick', () => {
+                link.attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+                node.attr('transform', d => `translate(${d.x},${d.y})`);
+            });
+
+            window.addEventListener('resize', () => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                svg.attr('width', w).attr('height', h);
+                simulation.force('center', d3.forceCenter(w / 2, h / 2)).alpha(0.3).restart();
+            });
+        }
+
+        // --- LIST & SEARCH ---
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.toggle('active', b.innerText === (filter === 'HS' ? '고등학교' : filter === 'All' ? '전체' : filter));
+            });
+            renderList();
+        }
+
+        function handleSearchInput() {
+            renderList();
+        }
+
+        function renderList() {
+            const list = document.getElementById('result-area');
+            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            list.innerHTML = '';
+
+            const filtered = allStandards.filter(s => {
+                if (currentFilter === '도덕 1' && s.volume !== '도덕 1') return false;
+                if (currentFilter === '도덕 2' && s.volume !== '도덕 2') return false;
+                if (currentFilter === 'HS' && s.volume !== '고교') return false;
+                // 'All' includes HS now.
+
+                if (!keyword) return true;
+                const rData = s.resource ? resourcesMap[s.resource] : null;
+                const rTitle = rData ? rData.title : '';
+
+                return s.definition.toLowerCase().includes(keyword) ||
+                    s.code.toLowerCase().includes(keyword) ||
+                    rTitle.toLowerCase().includes(keyword);
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:#64748b; margin-top:30px;">검색 결과가 없습니다.</div>`;
+                return;
+            }
+
+            filtered.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                // Add basket toggle on card click
+                card.onclick = () => {
+                    if (basket.has(s.id)) {
+                        basket.delete(s.id);
+                        card.style.background = 'rgba(255, 255, 255, 0.03)';
+                        card.style.borderColor = 'var(--glass-border)';
+                    } else {
+                        basket.add(s.id);
+                        card.style.background = 'rgba(255, 215, 0, 0.15)';
+                        card.style.borderColor = '#FFD700';
+                    }
+                    renderBasket();
+                };
+
+                // Set initial visual state if already in basket
+                if (basket.has(s.id)) {
+                    card.style.background = 'rgba(255, 215, 0, 0.15)';
+                    card.style.borderColor = '#FFD700';
+                }
+
+                let defHtml = s.definition;
+                if (keyword) defHtml = defHtml.replaceAll(keyword, `<span class="hl">${keyword}</span>`);
+
+                let resHtml = '';
+                const rData = s.resource ? resourcesMap[s.resource] : null;
+
+                if (rData) {
+                    let tagBadge = '';
+                    if (rData.tag) {
+                        const colors = { '그림책': '#F472B6', '소설': '#A78BFA', '영화': '#FBBF24', '애니메이션': '#38BDF8', '다큐': '#34D399', '인문': '#60A5FA', '에세이': '#E879F9' };
+                        const bg = colors[rData.tag] || '#94a3b8';
+                        tagBadge = `<span class="media-badge" style="background:${bg}; box-shadow:0 0 10px ${bg}66;">${rData.tag}</span>`;
+                    }
+                    resHtml = `<div class="card-res"><i data-lucide="book-open" size="16"></i> ${rData.title} ${tagBadge}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="card-header-row">
+                        <span class="card-code">${s.code}</span>
+                        <span class="card-vol" style="border:1px solid ${s.volume === '도덕 1' ? '#38bdf8' : (s.volume === '도덕 2' ? '#f87171' : '#fff')}">${s.volume}</span>
+                    </div>
+                    <div class="card-def">${defHtml}</div>
+                    ${resHtml}
+                `;
+                list.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function listScroll(direction) {
+            const el = document.getElementById('result-area');
+            el.scrollTo({ top: direction === 'top' ? 0 : el.scrollHeight, behavior: 'smooth' });
+        }
+
+        function renderBasket() {
+            const listEl = document.getElementById('basket-list');
+            const countEl = document.getElementById('basket-count');
+
+            listEl.innerHTML = '';
+            countEl.innerText = basket.size;
+
+            if (basket.size === 0) {
+                listEl.innerHTML = `<div style="text-align:center; color:#64748b; margin-top:20px; font-size:0.9rem;">성취기준 노드를 클릭해 담으세요.</div>`;
+                return;
+            }
+
+            // Sync visual state of all nodes (in case of re-render)
+            const circles = d3.selectAll('.node circle');
+            circles.each(function (d) {
+                if (d.group === 'standard') {
+                    if (basket.has(d.id)) {
+                        d3.select(this).attr('stroke', '#FFD700').attr('stroke-width', 4).attr('stroke-opacity', 1);
+                    } else {
+                        d3.select(this).attr('stroke', '#fff').attr('stroke-width', 3); // Reset to default
+                    }
+                }
+            });
+
+            basket.forEach(id => {
+                const std = allStandards.find(s => s.id === id);
+                if (!std) return;
+
+                const item = document.createElement('div');
+                item.className = 'basket-item';
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; overflow:hidden;">
+                        <span class="b-code">[${std.code}]</span>
+                        <span style="font-size:0.85rem; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${std.definition}</span>
+                    </div>
+                    <div class="b-del" onclick="removeFromBasket('${id}')"><i data-lucide="x" size="16"></i></div>
+                `;
+                item.onclick = (e) => {
+                    if (e.target.closest('.b-del')) return;
+                    // Click item to search
+                    const input = document.getElementById('searchInput');
+                    input.value = std.code;
+                    handleSearchInput();
+                };
+                listEl.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function removeFromBasket(id) {
+            basket.delete(id);
+            renderBasket();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.main-view').forEach(el => {
+                el.style.display = 'none';
+                el.classList.remove('active');
+            });
+
+            // Activate
+            if (tab === 'explore') {
+                document.querySelector('.tab-item:nth-child(1)').classList.add('active');
+                document.getElementById('view-explore').style.display = 'flex';
+            } else if (tab === 'lesson') {
+                document.querySelector('.tab-item:nth-child(2)').classList.add('active');
+                document.getElementById('view-lesson').style.display = 'flex';
+                renderLessonPlan();
+            } else if (tab === 'assessment') {
+                document.querySelector('.tab-item:nth-child(3)').classList.add('active');
+                document.getElementById('view-assessment').style.display = 'flex';
+                renderAssessmentPlan();
+            }
+        }
+
+        function renderLessonPlan() {
+            const tbody = document.querySelector('#lesson-table tbody');
+            tbody.innerHTML = '';
+
+            if (basket.size === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:30px;">바구니에 담긴 성취기준이 없습니다.</td></tr>';
+                return;
+            }
+
+            basket.forEach(id => {
+                const s = allStandards.find(item => item.id === id);
+                if (!s) return;
+                const areaName = AREA_MAP[s.areaId] ? AREA_MAP[s.areaId].fullName : '기타';
+
+                // 자동 교수·학습 방법 제안
+                const suggested = suggestMethods(s.definition);
+                const methodsText = suggested.methods.length > 0 ? suggested.methods.join('<br>') : '';
+
+                // 자동 평가 계획 제안 (체크박스)
+                const assessmentHTML = ALL_ASSESSMENT_TYPES.map(type => {
+                    const isChecked = suggested.assessments.includes(type);
+                    return `<label style="display:block; margin:4px 0; font-size:0.85rem; text-align:left;">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} style="margin-right:6px;">
+                        ${type}
+                    </label>`;
+                }).join('');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td contenteditable="true" style="cursor:text;"></td>
+                    <td contenteditable="true" style="cursor:text;"></td>
+                    <td>${s.volume} > ${areaName}</td>
+                    <td>[${s.code}] ${s.definition}</td>
+                    <td contenteditable="true" style="background:rgba(255,215,0,0.15); cursor:text; font-weight:600; padding:10px;">${methodsText}</td>
+                    <td>${assessmentHTML}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAssessmentPlan() {
+            const tbody = document.querySelector('#assessment-table tbody');
+            tbody.innerHTML = '';
+
+            if (basket.size === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px;">바구니에 담긴 성취기준이 없습니다.</td></tr>';
+                return;
+            }
+
+            basket.forEach(id => {
+                const s = allStandards.find(item => item.id === id);
+                if (!s) return;
+                const areaData = AREA_MAP[s.areaId];
+                const areaName = areaData ? areaData.fullName : '기타';
+                const competencies = areaData ? areaData.competencies : [];
+
+                // 역량 체크박스 HTML 생성
+                const competencyHTML = ALL_COMPETENCIES.map(comp => {
+                    const isChecked = competencies.includes(comp);
+                    return `<label style="display:block; margin:4px 0; font-size:0.85rem;">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} style="margin-right:6px;">
+                        ${comp}
+                    </label>`;
+                }).join('');
+
+                // 자동 과제 및 루브릭 제안
+                const suggested = suggestMethods(s.definition);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${areaName}</td>
+                    <td>${competencyHTML}</td>
+                    <td>[${s.code}] ${s.definition}</td>
+                    <td contenteditable="true" style="background:rgba(56,189,248,0.05); cursor:text; padding:12px; font-weight:600;">${suggested.task}</td>
+                    <td contenteditable="true" style="background:rgba(56,189,248,0.05); cursor:text; padding:12px; white-space:pre-line; font-size:0.85rem;">${suggested.rubric}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function downloadExcel() {
+            if (basket.size === 0) {
+                alert('바구니에 성취기준을 담은 후 엑셀 파일을 다운로드하세요.');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // === Sheet 1: 수업 계획서 ===
+            const lessonData = [['월', '주', '단원명', '성취기준', '교수·학습 방법', '평가 계획']];
+            basket.forEach(id => {
+                const s = allStandards.find(item => item.id === id);
+                if (!s) return;
+                const areaName = AREA_MAP[s.areaId] ? AREA_MAP[s.areaId].fullName : '기타';
+                const suggested = suggestMethods(s.definition);
+                const assessText = suggested.assessments.join(', ');
+                lessonData.push(['', '', `${s.volume} > ${areaName}`, `[${s.code}] ${s.definition}`, suggested.methods.join(', '), assessText]);
+            });
+            const ws1 = XLSX.utils.aoa_to_sheet(lessonData);
+
+            // 열 너비 설정
+            ws1['!cols'] = [{ wch: 8 }, { wch: 8 }, { wch: 25 }, { wch: 50 }, { wch: 20 }, { wch: 20 }];
+
+            // 헤더 스타일
+            const headerRange = XLSX.utils.decode_range(ws1['!ref']);
+            for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+                const address = XLSX.utils.encode_col(C) + "1";
+                if (!ws1[address]) continue;
+                ws1[address].s = {
+                    fill: { fgColor: { rgb: "4472C4" } },
+                    font: { bold: true, color: { rgb: "FFFFFF" } },
+                    alignment: { horizontal: "center", vertical: "center" },
+                    border: {
+                        top: { style: "thin", color: { rgb: "000000" } },
+                        bottom: { style: "thin", color: { rgb: "000000" } },
+                        left: { style: "thin", color: { rgb: "000000" } },
+                        right: { style: "thin", color: { rgb: "000000" } }
+                    }
+                };
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws1, '수업 계획서');
+
+            // === Sheet 2: 평가 계획서 ===
+            const assessData = [['평가 영역', '핵심 역량', '성취기준', '수행 과제', '채점 기준']];
+            basket.forEach(id => {
+                const s = allStandards.find(item => item.id === id);
+                if (!s) return;
+                const areaData = AREA_MAP[s.areaId];
+                const areaName = areaData ? areaData.fullName : '기타';
+                const competencies = areaData ? areaData.competencies.join(', ') : '';
+                assessData.push([areaName, competencies, `[${s.code}] ${s.definition}`, '', '']);
+            });
+            const ws2 = XLSX.utils.aoa_to_sheet(assessData);
+
+            ws2['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 50 }, { wch: 25 }, { wch: 25 }];
+
+            // 헤더 스타일
+            const headerRange2 = XLSX.utils.decode_range(ws2['!ref']);
+            for (let C = headerRange2.s.c; C <= headerRange2.e.c; ++C) {
+                const address = XLSX.utils.encode_col(C) + "1";
+                if (!ws2[address]) continue;
+                ws2[address].s = {
+                    fill: { fgColor: { rgb: "70AD47" } },
+                    font: { bold: true, color: { rgb: "FFFFFF" } },
+                    alignment: { horizontal: "center", vertical: "center" },
+                    border: {
+                        top: { style: "thin", color: { rgb: "000000" } },
+                        bottom: { style: "thin", color: { rgb: "000000" } },
+                        left: { style: "thin", color: { rgb: "000000" } },
+                        right: { style: "thin", color: { rgb: "000000" } }
+                    }
+                };
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws2, '평가 계획서');
+
+            // 파일 다운로드
+            XLSX.writeFile(wb, '도덕과_수업평가계획서.xlsx');
+        }
+
+        function copyTable(tableId) {
+            const range = document.createRange();
+            range.selectNode(document.getElementById(tableId));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();
+            alert('표가 클립보드에 복사되었습니다. 엑셀이나 한글에 붙여넣기 하세요.');
+        }
+
+        setTimeout(initData, 100);
+
+    </script>
+</body>
+
+</html>

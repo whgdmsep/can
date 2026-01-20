@@ -9,6 +9,7 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             /* Background & UI */
@@ -637,6 +638,349 @@
                 justify-content: center;
             }
         }
+
+        .data-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .data-table [contenteditable="true"]:focus {
+            outline: 2px solid var(--vol-1);
+            background: #fff !important;
+        }
+
+        .reading-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .badge-facts {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .badge-argument {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-appreciation {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .activity-example {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed var(--vol-1);
+            color: #1a1c2e;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .activity-example strong {
+            color: var(--vol-1);
+            font-weight: 800;
+        }
+
+        /* Responsive adjustments for the new view */
+        /* Activity Modal Styles */
+        #activity-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #fff;
+            color: #1a1c2e;
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            background: #1a1c2e;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .modal-info-bar {
+            background: #f1f5f9;
+            padding: 12px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: #fff;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .strategy-tag {
+            display: inline-block;
+            cursor: pointer;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-decoration: underline;
+        }
+
+        .strategy-tag:hover {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .activity-placeholder {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .activity-placeholder i {
+            color: var(--vol-1);
+            margin-bottom: 20px;
+        }
+
+        .activity-placeholder p {
+            font-size: 1.1rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* --- PRINT WORKSHEET STYLES --- */
+        @media print {
+            body {
+                background: white !important;
+                overflow: visible !important;
+                width: auto !important;
+                height: auto !important;
+            }
+
+            .main-tabs,
+            .action-bar,
+            .close-btn,
+            #activity-modal,
+            #graph-container,
+            #list-container,
+            .main-view:not(#view-worksheet),
+            #instructional-design-table {
+                display: none !important;
+            }
+
+            #view-worksheet,
+            #worksheet-print-area {
+                display: block !important;
+                visibility: visible !important;
+                position: static !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        #worksheet-print-area {
+            display: none;
+            background: #fff;
+            color: #1e293b;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            font-size: 11pt;
+        }
+
+        .ws-header {
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .ws-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            margin: 0 0 20px 0;
+            color: #000;
+        }
+
+        .ws-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .ws-student-box {
+            border: 1px solid #cbd5e1;
+            padding: 8px 15px;
+            display: flex;
+            gap: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .ws-section {
+            margin-bottom: 35px;
+            page-break-inside: avoid;
+        }
+
+        .ws-section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--vol-1);
+            padding-left: 12px;
+        }
+
+        .ws-content-box {
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            background: #fcfcfc;
+        }
+
+        .ws-label {
+            display: block;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .ws-text {
+            min-height: 20px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+        }
+
+        /* --- DROPDOWN MENU --- */
+        .ws-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .ws-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            min-width: 220px;
+            overflow: hidden;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ws-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #0f172a;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .ws-dropdown-item i {
+            width: 20px;
+            height: 20px;
+            color: #2563eb;
+        }
+
+        .ws-dropdown-item span {
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        .ws-dropdown-item:hover {
+            background: #f1f5f9;
+        }
+
+        .ws-dropdown-item:active {
+            background: #e2e8f0;
+        }
+
+        .ws-dropdown-divider {
+            height: 2px;
+            background: #e2e8f0;
+            margin: 0;
+        }
+
+        /* High Contrast Variant for Item Icon/Text on Hover */
+        .ws-dropdown-item:hover i,
+        .ws-dropdown-item:hover span {
+            color: #1e40af;
+        }
     </style>
 </head>
 
@@ -645,6 +989,7 @@
         <div class="tab-item active" onclick="switchTab('explore')">지식 탐험</div>
         <div class="tab-item" onclick="switchTab('lesson')">수업 계획서</div>
         <div class="tab-item" onclick="switchTab('assessment')">평가 계획서</div>
+        <div class="tab-item" onclick="switchTab('detail-plan')">수업지도안</div>
     </nav>
 
     <!-- VIEW 1: EXPLORE -->
@@ -706,13 +1051,15 @@
                 style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
                     data-lucide="x"></i> 그래프로 돌아가기</button>
             <div class="action-bar">
-                <button class="action-btn" onclick="copyTable('lesson-table')"><i data-lucide="copy"></i> 표 양식
+                <button class="action-btn" onclick="copyTable('lesson-plan-table')"><i data-lucide="copy"></i> 표 양식
                     복사하기</button>
                 <button class="action-btn" onclick="downloadExcel()"><i data-lucide="download"></i> 엑셀 파일로 내려받기</button>
+                <button class="action-btn" onclick="downloadPDF('view-lesson')"
+                    style="background:#ef4444; color:#fff;"><i data-lucide="file-text"></i> PDF 파일로 내려받기</button>
             </div>
             <div class="paper">
                 <h2>수업 계획서</h2>
-                <table id="lesson-table" class="data-table">
+                <table id="lesson-plan-table" class="data-table">
                     <thead>
                         <tr>
                             <th width="8%">월</th>
@@ -738,13 +1085,15 @@
                 style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
                     data-lucide="x"></i> 그래프로 돌아가기</button>
             <div class="action-bar">
-                <button class="action-btn" onclick="copyTable('assessment-table')"><i data-lucide="copy"></i> 표 양식
+                <button class="action-btn" onclick="copyTable('assessment-plan-table')"><i data-lucide="copy"></i> 표 양식
                     복사하기</button>
                 <button class="action-btn" onclick="downloadExcel()"><i data-lucide="download"></i> 엑셀 파일로 내려받기</button>
+                <button class="action-btn" onclick="downloadPDF('view-assessment')"
+                    style="background:#ef4444; color:#fff;"><i data-lucide="file-text"></i> PDF 파일로 내려받기</button>
             </div>
             <div class="paper">
                 <h2>평가 계획서</h2>
-                <table id="assessment-table" class="data-table">
+                <table id="assessment-plan-table" class="data-table">
                     <thead>
                         <tr>
                             <th width="15%">평가 영역</th>
@@ -760,6 +1109,87 @@
                 </table>
             </div>
         </div>
+    </div>
+
+    <!-- VIEW 4: DETAILED LESSON PLAN (GAGNE) -->
+    <div id="view-detail-plan" class="main-view" style="display:none; flex-direction:column;">
+        <div class="plan-container">
+            <button class="close-btn" onclick="switchTab('explore')"
+                style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
+                    data-lucide="x"></i> 그래프로 돌아가기</button>
+            <div class="action-bar">
+                <button class="action-btn" onclick="copyTable('instructional-design-table')"><i data-lucide="copy"></i>
+                    표 양식 복사하기</button>
+                <button class="action-btn" onclick="downloadPDF('view-detail-plan')"
+                    style="background:#ef4444; color:#fff;"><i data-lucide="file-text"></i> PDF 파일로 내려받기</button>
+                <div class="ws-dropdown-container">
+                    <button class="action-btn" onclick="toggleWorksheetDropdown(event)"
+                        style="background:#0ea5e9; color:#fff;"><i data-lucide="download"></i> 학생용 학습지 내려받기 <i
+                            data-lucide="chevron-down" style="width:16px; margin-left:5px;"></i></button>
+                    <div id="ws-dropdown-menu" class="ws-dropdown-menu">
+                        <button class="ws-dropdown-item" onclick="copyWorksheetTable()">
+                            <i data-lucide="copy"></i>
+                            <span>표 양식 복사</span>
+                        </button>
+                        <div class="ws-dropdown-divider"></div>
+                        <button class="ws-dropdown-item" onclick="downloadWorksheetPDF()">
+                            <i data-lucide="file-text"></i>
+                            <span>PDF 파일 내려받기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="instructional-design-table"
+                style="width:100%; display:flex; flex-direction:column; align-items:center;">
+                <!-- Tables will be injected here for each selected standard -->
+            </div>
+
+            <!-- WORKSHEET PRINT AREA (Hidden by default) -->
+            <div id="worksheet-print-area">
+                <div class="ws-header">
+                    <h1 class="ws-title">도덕과 독서 활동 학습지</h1>
+                    <div class="ws-meta-row">
+                        <div id="ws-std-info" style="font-size:0.9rem; color:#475569; max-width:60%;">
+                            <!-- 성취기준 정보 -->
+                        </div>
+                        <div class="ws-student-box">
+                            <span>학년: ____</span>
+                            <span>반: ____</span>
+                            <span>번호: ____</span>
+                            <span>이름: __________</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="ws-body">
+                    <!-- Dynamic sections go here -->
+                </div>
+            </div>
+
+            <!-- ACTIVITY MODAL -->
+            <div id="activity-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>독서 전략 활동지</h3>
+                        <button onclick="closeActivityModal()"
+                            style="background:none; border:none; color:#fff; cursor:pointer;"><i
+                                data-lucide="x"></i></button>
+                    </div>
+                    <div class="modal-info-bar" id="modal-info">
+                        <!-- Info injected here -->
+                    </div>
+                    <div class="modal-body" id="modal-body">
+                        <!-- Activity content injected here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button class="action-btn" style="background:#64748b; color:#fff;"
+                            onclick="closeActivityModal()">닫기</button>
+                        <button class="action-btn" id="save-activity-btn">지도안에 결과 반영하기</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
     </div>
 
     <script>
@@ -842,6 +1272,101 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
             '04': { id: 'Area_4', label: '자연', fullName: 'IV. 자연과의 관계', color: '#BF00FF', competencies: ['도덕적 사고 역량', '자기성찰·계발 역럅'] }
         };
 
+        // 가네의 9단계 수업 사태 (class_strategy.ttl 기반)
+        const GAGNE_EVENTS = [
+            { id: 'Event01', step: 1, label: '주의 집중', strategies: ['흥미 유발하기', '시범', '낮은 단계의 거리두기'] },
+            { id: 'Event02', step: 2, label: '수업 목표 제시', strategies: ['학습목표 유지시키기', '목표추구 유지하기', '학습자의 요구를 북돋우고 세분화된 목표 설정하기', '설명 제공하기'] },
+            { id: 'Event03', step: 3, label: '선행 학습 상기', strategies: ['자유의 정도 감소시키기', '계획하기', '활성화와 배경 지식의 활용', '구체화하기'], readingProcess: '독서 전' },
+            { id: 'Event04', step: 4, label: '자극 자료 제시', strategies: ['기대행동 시범보이기', '중간단계의 거리두기', '필요에 따라 설명 제공하기', '모델링', '학습자의 발언과 질문을 고무하고 이용하기'] },
+            { id: 'Event05', step: 5, label: '학습 안내', strategies: ['과전 통제', '주제의 초점', '학습자의 실습 지도하고 조력하기', '직접적인 가르침', '사고과정 시범 보이기', '설정된 조력 제공하기', '교수하기', '인지적 구조화'], readingProcess: '독서 중' },
+            { id: 'Event06', step: 6, label: '성취 수행 유도', strategies: ['보다 복잡한 언어와 표현의 확대', '학습자 참여 권유하기', '진술이나 입장 표명에 대한 근거의 증가', '학생의 기여에 대한 반응', '학습자가 단서를 제공하도록 유도하기', '자기 선택적 순서가 포함된 일반적 참여', '학생의 인지적 정의적 상태 및 능력 수준 알고자 노력하기'], readingProcess: '독서 중' },
+            { id: 'Event07', step: 7, label: '피드백 제공', strategies: ['과제의 주요 특성 표시하기', '피드백 주기', '학습자 이해 확인 및 명료화하기', '유관 조절', '학습자의 사고를 직접적으로 평가하지 않는 피드백 제공하기', '정서적인 지지와 양성의 높은 수준 보여주기', '학습자의 실수에 유동적으로 반응'] },
+            { id: 'Event08', step: 8, label: '수행 평가', strategies: ['의욕적이면서도 위협적이지 않은 환경 제공하기', '학습자가 답을 유출하기 위해서 협의하는 동안 인내하기', '질문하기', '높은 단계의 거리두기'], readingProcess: '독서 후' },
+            { id: 'Event09', step: 9, label: '파지 및 전이 제고', strategies: ['알려진 답이 거의 없는 질문', '연결된 담화 토론', '교사의 지지 강도 줄이기', '쓰기', '상호작용에 있어 대화적 유형 사용하기'], readingProcess: '독서 후' }
+        ];
+
+        // 독서 전략 (reading_strategy.ttl 기반)
+        const READING_STRATEGIES = {
+            '독서 전': ['예측 안내하기', '브레인스토밍', 'SQ3R', 'KWL', '훑어 읽기'],
+            '독서 중': ['SQ3R', '마인드맵', '캐릭터 차트', '앙케이트/질문표', 'KWL', 'QAR', '이야기지도', '생각 말하기', '건너뛰며 읽기'],
+            '독서 후': ['마인드맵', '요약기법', '그래픽조직자', 'QAR', '이야기지도']
+        };
+
+        // 텍스트 종류별 추천 전략 (사용자 요청 기반)
+        const TEXT_TYPE_STRATEGIES = {
+            '주장': ['앙케이트/질문표', 'QAR', '생각 말하기'],
+            '사실': ['KWL', '요약기법', '그래픽조직자', 'SQ3R'],
+            '감상': ['캐릭터 차트', '이야기지도', '예측 안내하기']
+        };
+
+        const TEXT_TYPE_KEYWORDS = {
+            '주장': ['분석', '비판', '타당성', '쟁점'],
+            '사실': ['이해', '의미', '특징', '원인'],
+            '감상': ['감상', '성찰', '태도', '내면화']
+        };
+
+        const ACTIVITY_TEMPLATES = {
+            '예측 안내하기': '글의 제목과 시각 자료를 보며 어떤 이야기가 전개될지 도식화하여 예측해 봅시다.',
+            '브레인스토밍': '주제와 관련하여 떠오르는 모든 단어와 아이디어를 자유롭게 공유해 봅시다.',
+            'SQ3R': '훑어보기(Survey), 질문하기(Question), 읽기(Read), 암송하기(Recite), 검토하기(Review) 단계를 따라 깊이 있게 읽어 봅시다.',
+            '마인드맵': '중심 개념을 바탕으로 가지를 뻗어 나가며 사고의 지도를 그려 봅시다.',
+            '캐릭터 차트': '등장인물의 성격, 행동, 동기를 분석하여 인물 특징 지도를 완성해 봅시다.',
+            '앙케이트/질문표': '글의 쟁점에 대해 자신의 입장을 정하고 질문표를 작성해 봅시다.',
+            'KWL': '알고 있는 것(Know), 알고 싶은 것(Want), 배운 것(Learn)을 차례로 정리해 봅시다.',
+            '요약기법': '글의 핵심 문장을 추려 내용을 간결하게 요약해 봅시다.',
+            '그래픽조직자': '표나 다이어그램 등 시각적인 틀을 활용하여 글의 구조를 체계화해 봅시다.',
+            'QAR': '질문과 답변의 관계(Question-Answer Relationship)를 분석하며 정답의 위치를 찾아봅시다.',
+            '이야기지도': '사건의 흐름과 배경, 해결 과정을 시간 순서대로 재구성해 봅시다.',
+            '생각 말하기': '글을 읽으며 머릿속에 떠오르는 생각을 실시간으로 말하며 인지 과정을 공유해 봅시다.',
+            '훑어 읽기': '핵심어와 제목 위주로 빠르게 훑으며 전체적인 분위기를 파악해 봅시다.',
+            '건너뛰며 읽기': '필요한 정보를 찾기 위해 중요하지 않은 부분은 빠르게 넘기며 읽어 봅시다.'
+        };
+
+        function generateDetailedActivity(event, strategy, definition) {
+            const template = ACTIVITY_TEMPLATES[strategy] || '해당 전략을 활용하여 활동을 진행합니다.';
+
+            switch (event.step) {
+                case 1: // 주의 집중
+                    return `<strong>[도입: 주의 집중]</strong><br>교사: "오늘 배울 '${definition.split(' ')[0]}...'과 관련된 흥미로운 자료를 보여줄게요. ${strategy} 전략을 활용해 어떤 내용일지 상상해 볼까요?"`;
+                case 3: // 선행 학습 상기
+                    return `<strong>[전개: 선행 학습 상기]</strong><br>학생: 지난 시간에 배운 핵심 개념을 떠올리며, ${strategy}를 통해 오늘 공부할 내용과 연결 지어 봅시다.`;
+                case 5: // 학습 안내
+                    return `<strong>[전개: 학습 안내]</strong><br>교사: "글을 읽는 동안 ${strategy}를 활용해 보세요. 특히 인과 관계나 중요한 특징을 놓치지 않도록 주의해야 합니다."`;
+                case 6: // 성취 수행 유도
+                    return `<strong>[전개: 성취 수행 유도]</strong><br>학생: 제시된 활동지의 ${strategy} 양식에 따라 자신의 생각을 정리하고 친구들과 의견을 나누어 봅시다.`;
+                case 9: // 파지 및 전이 제고
+                    return `<strong>[정리: 전이 제고]</strong><br>교사: "오늘 배운 '${strategy}' 방법을 다른 글을 읽을 때도 적용해 본다면 어떨까요? 삶의 문제에 어떻게 적용할지 ${strategy}로 최종 정리해 봅시다."`;
+                default:
+                    return template;
+            }
+        }
+
+        function recommendReadingStrategies(definition, process) {
+            if (!process) return [];
+
+            // 1. 텍스트 종류 판별
+            let type = '사실'; // 기본값
+            for (const [t, keywords] of Object.entries(TEXT_TYPE_KEYWORDS)) {
+                if (keywords.some(k => definition.includes(k))) {
+                    type = t;
+                    break;
+                }
+            }
+
+            // 2. 해당 과정의 전체 풀
+            const pool = READING_STRATEGIES[process] || [];
+            // 3. 해당 텍스트 종류의 핵심 전략
+            const core = TEXT_TYPE_STRATEGIES[type] || [];
+
+            // 4. 교집합 및 순위화 (텍스트 종류별 핵심 전략 우선)
+            const recommended = [
+                ...core.filter(s => pool.includes(s)),
+                ...pool.filter(s => !core.includes(s))
+            ];
+
+            return recommended.slice(0, 4); // 상위 4개 반환
+        }
+
         // 도덕과 핵심 역량 전체 목록
         const ALL_COMPETENCIES = ['자기성찰·계발 역량', '도덕적 대인관계 역량', '도덕적 사고 역량', '도덕적 공동체 역량'];
 
@@ -906,6 +1431,9 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
         let resourcesMap = {};
         let currentFilter = 'All';
         let basket = new Set(); // Stores Standard IDs
+
+        // 활동지 데이터를 임시 저장할 공간 (성취기준ID_전략이름 : 데이터)
+        let activityDataStore = {};
 
         function initData() {
             // A. Resources with Tags
@@ -1358,11 +1886,126 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
                 document.querySelector('.tab-item:nth-child(3)').classList.add('active');
                 document.getElementById('view-assessment').style.display = 'flex';
                 renderAssessmentPlan();
+            } else if (tab === 'detail-plan') {
+                document.querySelector('.tab-item:nth-child(4)').classList.add('active');
+                document.getElementById('view-detail-plan').style.display = 'flex';
+                renderDetailPlan();
             }
         }
 
+        function renderDetailPlan() {
+            const container = document.getElementById('instructional-design-table');
+            container.innerHTML = '';
+
+            if (basket.size === 0) {
+                container.innerHTML = '<div class="paper"><h2>수업지도안</h2><p style="text-align:center; padding:30px;">바구니에 담긴 성취기준이 없습니다.</p></div>';
+                return;
+            }
+
+            basket.forEach(id => {
+                const s = allStandards.find(item => item.id === id);
+                if (!s) return;
+
+                const areaName = AREA_MAP[s.areaId] ? AREA_MAP[s.areaId].fullName : '기타';
+                const suggested = suggestMethods(s.definition);
+                const rData = s.resource ? resourcesMap[s.resource] : null;
+
+                const paper = document.createElement('div');
+                paper.className = 'paper';
+                paper.style.marginBottom = '50px';
+
+                let html = `
+                    <h2>수업지도안 (Gagne 9단계)</h2>
+                    <table class="data-table" style="margin-bottom:25px;">
+                        <tr>
+                            <th width="15%">성취기준</th>
+                            <td colspan="3">[${s.code}] ${s.definition}</td>
+                        </tr>
+                        <tr>
+                            <th width="15%">단원명</th>
+                            <td width="35%">${s.volume} > ${areaName}</td>
+                            <th width="15%">학습주제</th>
+                            <td width="35%" contenteditable="true">${s.definition.split(' ')[0]} 탐구하기</td>
+                        </tr>
+                    </table>
+
+                    <table class="data-table" id="detail-plan-table-${s.code}">
+                        <thead>
+                            <tr>
+                                <th width="10%">단계</th>
+                                <th width="15%">수업 사태</th>
+                                <th width="45%">교수·학습 활동 (전략 자동 매핑)</th>
+                                <th width="30%">학습 자료 및 유의점 (독서 전략 연동)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                GAGNE_EVENTS.forEach(event => {
+                    let gagneStrategies = event.strategies.join(', ');
+                    let activityHtml = `<div style="color:#64748b; font-size:0.8rem; margin-bottom:8px;">[수업전략] ${gagneStrategies}</div>`;
+                    let notes = '';
+
+                    // 독서 전략 연동 (reading_strategy.ttl 기반 동적 매핑)
+                    if (event.readingProcess) {
+                        const strategies = recommendReadingStrategies(s.definition, event.readingProcess);
+                        const primaryStrategy = strategies[0]; // 대표 전략 선택
+
+                        // 현재 어떤 타입으로 분류되었는지 식별
+                        let textType = '사실';
+                        let badgeClass = 'badge-facts';
+                        if (TEXT_TYPE_KEYWORDS['주장'].some(k => s.definition.includes(k))) {
+                            textType = '주장'; badgeClass = 'badge-argument';
+                        } else if (TEXT_TYPE_KEYWORDS['감상'].some(k => s.definition.includes(k))) {
+                            textType = '감상'; badgeClass = 'badge-appreciation';
+                        }
+
+                        // 구체적 활동 예시 생성
+                        const detailActivity = generateDetailedActivity(event, primaryStrategy, s.definition);
+                        activityHtml += `<div class="activity-example">${detailActivity}</div>`;
+
+                        notes = `<div class="reading-badge ${badgeClass}">${textType} 중심 전략</div>` +
+                            `<div style="color:#0369a1; font-weight:600; font-size:0.8rem; margin-bottom:5px;">${event.readingProcess} 추천 리스트</div>` +
+                            strategies.map(st => `<span class="strategy-tag" onclick="openActivityModal('${s.id}', '${st}', '${event.id}')">• ${st}</span>`).join('<br>');
+                    } else {
+                        activityHtml += `<div class="activity-example">활동 내용을 입력하세요.</div>`;
+                    }
+
+                    // 동적 활동 제안 (미디어)
+                    if (event.step === 4 && rData) {
+                        activityHtml += `<div style="margin-top:10px; padding:10px; background:rgba(225,29,72,0.05); border-radius:8px; border-left:4px solid #e11d48;">
+                            <strong style="color:#e11d48;">[미디어 활용]</strong><br>'${rData.title}' (${rData.tag}) 자료를 활용하여 학습 자극 제공
+                        </div>`;
+                    }
+
+                    // 수행 유도 (과제)
+                    if (event.step === 6) {
+                        activityHtml += `<div style="margin-top:10px; padding:10px; background:rgba(37,99,235,0.05); border-radius:8px; border-left:4px solid #2563eb;">
+                            <strong style="color:#2563eb;">[활동 제안]</strong><br>${suggested.task}
+                        </div>`;
+                    }
+
+                    html += `
+                        <tr data-event-id="${event.id}">
+                            <td style="text-align:center; font-weight:700; color:#64748b;">${event.step === 1 || event.step === 2 ? '도입' : (event.step >= 3 && event.step <= 7 ? '전개' : '정리')}</td>
+                            <td style="text-align:center; background:#f8fafc; font-weight:600;">${event.label}</td>
+                            <td contenteditable="true" style="vertical-align:top; line-height:1.6; padding:15px;">${activityHtml}</td>
+                            <td contenteditable="true" style="vertical-align:top; line-height:1.6; font-size:0.85rem; background:#f1f5f9; padding:15px;">${notes}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                        </tbody>
+                    </table>
+                `;
+                paper.innerHTML = html;
+                container.appendChild(paper);
+            });
+        }
+
         function renderLessonPlan() {
-            const tbody = document.querySelector('#lesson-table tbody');
+            const tbody = document.querySelector('#lesson-plan-table tbody');
             tbody.innerHTML = '';
 
             if (basket.size === 0) {
@@ -1402,7 +2045,7 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
         }
 
         function renderAssessmentPlan() {
-            const tbody = document.querySelector('#assessment-table tbody');
+            const tbody = document.querySelector('#assessment-plan-table tbody');
             tbody.innerHTML = '';
 
             if (basket.size === 0) {
@@ -1447,89 +2090,946 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
                 return;
             }
 
+            // 모든 계획서가 렌더링되어 있는지 확인 (DOM에 데이터가 없으면 렌더링 실행)
+            const lessonRowsCount = document.querySelectorAll('#lesson-plan-table tbody tr').length;
+            const assessRowsCount = document.querySelectorAll('#assessment-plan-table tbody tr').length;
+            const detailPapersCount = document.getElementById('instructional-design-table').children.length;
+
+            // 바구니에 담겼는데 렌더링된 행이 없거나 안내 문구만 있는 경우 강제 렌더링
+            if (lessonRowsCount <= 1) renderLessonPlan();
+            if (assessRowsCount <= 1) renderAssessmentPlan();
+            if (detailPapersCount === 0) renderDetailPlan();
+
             const wb = XLSX.utils.book_new();
 
-            // === Sheet 1: 수업 계획서 ===
-            const lessonData = [['월', '주', '단원명', '성취기준', '교수·학습 방법', '평가 계획']];
-            basket.forEach(id => {
-                const s = allStandards.find(item => item.id === id);
-                if (!s) return;
-                const areaName = AREA_MAP[s.areaId] ? AREA_MAP[s.areaId].fullName : '기타';
-                const suggested = suggestMethods(s.definition);
-                const assessText = suggested.assessments.join(', ');
-                lessonData.push(['', '', `${s.volume} > ${areaName}`, `[${s.code}] ${s.definition}`, suggested.methods.join(', '), assessText]);
-            });
-            const ws1 = XLSX.utils.aoa_to_sheet(lessonData);
+            // 셀 스타일(줄바꿈 등) 적용을 위한 헬퍼 함수
+            const applyStyles = (ws, wrapCols) => {
+                if (!ws['!ref']) return;
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[cellRef]) continue;
 
-            // 열 너비 설정
-            ws1['!cols'] = [{ wch: 8 }, { wch: 8 }, { wch: 25 }, { wch: 50 }, { wch: 20 }, { wch: 20 }];
+                        // 스타일 객체 초기화
+                        if (!ws[cellRef].s) ws[cellRef].s = {};
+                        if (!ws[cellRef].s.alignment) ws[cellRef].s.alignment = {};
 
-            // 헤더 스타일
-            const headerRange = XLSX.utils.decode_range(ws1['!ref']);
-            for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
-                const address = XLSX.utils.encode_col(C) + "1";
-                if (!ws1[address]) continue;
-                ws1[address].s = {
-                    fill: { fgColor: { rgb: "4472C4" } },
-                    font: { bold: true, color: { rgb: "FFFFFF" } },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    border: {
-                        top: { style: "thin", color: { rgb: "000000" } },
-                        bottom: { style: "thin", color: { rgb: "000000" } },
-                        left: { style: "thin", color: { rgb: "000000" } },
-                        right: { style: "thin", color: { rgb: "000000" } }
+                        // 기본 정렬: 중앙, 중간
+                        ws[cellRef].s.alignment.vertical = 'middle';
+
+                        // 데이터 행(헤더 제외)이면서 지정된 컬럼인 경우 줄바꿈 및 상단 정렬 적용
+                        if (R > 0 && wrapCols.includes(C)) {
+                            ws[cellRef].s.alignment.wrapText = true;
+                            ws[cellRef].s.alignment.vertical = 'top';
+                        } else if (R === 0) {
+                            // 헤더는 중앙 정렬
+                            ws[cellRef].s.alignment.horizontal = 'center';
+                        }
                     }
-                };
-            }
+                }
+            };
 
-            XLSX.utils.book_append_sheet(wb, ws1, '수업 계획서');
-
-            // === Sheet 2: 평가 계획서 ===
-            const assessData = [['평가 영역', '핵심 역량', '성취기준', '수행 과제', '채점 기준']];
-            basket.forEach(id => {
-                const s = allStandards.find(item => item.id === id);
-                if (!s) return;
-                const areaData = AREA_MAP[s.areaId];
-                const areaName = areaData ? areaData.fullName : '기타';
-                const competencies = areaData ? areaData.competencies.join(', ') : '';
-                assessData.push([areaName, competencies, `[${s.code}] ${s.definition}`, '', '']);
+            // === 시트 1: 수업계획서 ===
+            const lessonRows = [['월', '주', '단원명', '성취기준', '교수·학습 방법', '평가 계획']];
+            document.querySelectorAll('#lesson-plan-table tbody tr').forEach(tr => {
+                const cells = tr.querySelectorAll('td');
+                if (cells.length < 6) return;
+                const row = Array.from(cells).slice(0, 5).map(c => c.innerText.trim());
+                const checkedAssess = [];
+                cells[5].querySelectorAll('label').forEach(lbl => {
+                    if (lbl.querySelector('input').checked) checkedAssess.push(lbl.innerText.trim());
+                });
+                row.push(checkedAssess.join(', '));
+                lessonRows.push(row);
             });
-            const ws2 = XLSX.utils.aoa_to_sheet(assessData);
+            const ws1 = XLSX.utils.aoa_to_sheet(lessonRows);
+            ws1['!cols'] = [{ wch: 8 }, { wch: 8 }, { wch: 25 }, { wch: 60 }, { wch: 40 }, { wch: 30 }];
+            applyStyles(ws1, [3, 4]); // 성취기준(3), 교수·학습 방법(4) 컬럼 줄바꿈
+            XLSX.utils.book_append_sheet(wb, ws1, '수업계획서');
 
-            ws2['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 50 }, { wch: 25 }, { wch: 25 }];
+            // === 시트 2: 평가계획서 ===
+            const assessRows = [['평가 영역', '핵심 역량', '성취기준', '수행 과제', '채점 기준']];
+            document.querySelectorAll('#assessment-plan-table tbody tr').forEach(tr => {
+                const cells = tr.querySelectorAll('td');
+                if (cells.length < 5) return;
+                const row = [cells[0].innerText.trim()];
+                const checkedComp = [];
+                cells[1].querySelectorAll('label').forEach(lbl => {
+                    if (lbl.querySelector('input').checked) checkedComp.push(lbl.innerText.trim());
+                });
+                row.push(checkedComp.join(', '));
+                row.push(cells[2].innerText.trim()); // 성취기준
+                row.push(cells[3].innerText.trim()); // 수행 과제
+                row.push(cells[4].innerText.trim()); // 채점 기준
+                assessRows.push(row);
+            });
+            const ws2 = XLSX.utils.aoa_to_sheet(assessRows);
+            ws2['!cols'] = [{ wch: 25 }, { wch: 30 }, { wch: 60 }, { wch: 40 }, { wch: 50 }];
+            applyStyles(ws2, [2]); // 성취기준(2) 컬럼 줄바꿈
+            XLSX.utils.book_append_sheet(wb, ws2, '평가계획서');
 
-            // 헤더 스타일
-            const headerRange2 = XLSX.utils.decode_range(ws2['!ref']);
-            for (let C = headerRange2.s.c; C <= headerRange2.e.c; ++C) {
-                const address = XLSX.utils.encode_col(C) + "1";
-                if (!ws2[address]) continue;
-                ws2[address].s = {
-                    fill: { fgColor: { rgb: "70AD47" } },
-                    font: { bold: true, color: { rgb: "FFFFFF" } },
-                    alignment: { horizontal: "center", vertical: "center" },
-                    border: {
-                        top: { style: "thin", color: { rgb: "000000" } },
-                        bottom: { style: "thin", color: { rgb: "000000" } },
-                        left: { style: "thin", color: { rgb: "000000" } },
-                        right: { style: "thin", color: { rgb: "000000" } }
-                    }
-                };
+            // === 시트 3: 수업지도안 ===
+            const detailRows = [['성취기준', '단계', '수업 사태', '교수·학습 활동', '학습 자료 및 유의점']];
+            const detailArea = document.getElementById('instructional-design-table');
+            detailArea.querySelectorAll('.paper').forEach(paper => {
+                const stdInfoCell = paper.querySelector('table:first-of-type tr:first-child td');
+                const stdInfo = stdInfoCell ? stdInfoCell.innerText.trim() : '';
+                const table = paper.querySelector('.data-table:last-of-type');
+                if (table) {
+                    table.querySelectorAll('tbody tr').forEach(tr => {
+                        const cells = tr.querySelectorAll('td');
+                        if (cells.length >= 4) {
+                            detailRows.push([
+                                stdInfo,
+                                cells[0].innerText.trim(),
+                                cells[1].innerText.trim(),
+                                cells[2].innerText.trim(),
+                                cells[3].innerText.trim()
+                            ]);
+                        }
+                    });
+                }
+                detailRows.push(['', '', '', '', '']); // 구분선 대체 빈 행
+            });
+            const ws3 = XLSX.utils.aoa_to_sheet(detailRows);
+            ws3['!cols'] = [{ wch: 40 }, { wch: 10 }, { wch: 15 }, { wch: 80 }, { wch: 50 }];
+            applyStyles(ws3, [0, 3]); // 성취기준(0), 교수·학습 활동(3) 컬럼 줄바꿈
+            XLSX.utils.book_append_sheet(wb, ws3, '수업지도안');
+
+            XLSX.writeFile(wb, '도덕과_교육과정_통합계획.xlsx');
+        }
+
+        async function downloadPDF(viewId) {
+            const container = document.querySelector(`#${viewId} .plan-container`);
+            if (!container) return;
+
+            // PDF 출력을 위해 버튼 등 UI 요소 임시 숨김
+            const actionBar = container.querySelector('.action-bar');
+            const closeBtn = container.querySelector('.close-btn');
+            if (actionBar) actionBar.style.visibility = 'hidden';
+            if (closeBtn) closeBtn.style.visibility = 'hidden';
+
+            const options = {
+                margin: [10, 10, 10, 10],
+                filename: `도덕과_교육과정_${viewId}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            try {
+                // 특정 영역(주로 .paper 또는 세부 지도안 영역)을 지정하여 출력
+                const content = (viewId === 'view-detail-plan')
+                    ? container.querySelector('#instructional-design-table')
+                    : container.querySelector('.paper');
+
+                await html2pdf().set(options).from(content).save();
+            } catch (error) {
+                console.error('PDF 생성 오류:', error);
+                alert('PDF 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            } finally {
+                if (actionBar) actionBar.style.visibility = 'visible';
+                if (closeBtn) closeBtn.style.visibility = 'visible';
             }
-
-            XLSX.utils.book_append_sheet(wb, ws2, '평가 계획서');
-
-            // 파일 다운로드
-            XLSX.writeFile(wb, '도덕과_수업평가계획서.xlsx');
         }
 
         function copyTable(tableId) {
+            const el = document.getElementById(tableId);
+            if (!el) return;
+
             const range = document.createRange();
-            range.selectNode(document.getElementById(tableId));
+            range.selectNode(el);
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
-            document.execCommand("copy");
+
+            try {
+                // HTML 형식 유지를 위해 execCommand 사용 (대부분의 워드/한글 프로그램에서 HTML 형식을 지원함)
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('표 양식이 복사되었습니다. 한글(HWP)이나 워드에 [원본 서식 유지]로 붙여넣으세요.');
+                }
+            } catch (err) {
+                console.error('복사 중 오류 발생:', err);
+                alert('복사에 실패했습니다.');
+            }
             window.getSelection().removeAllRanges();
-            alert('표가 클립보드에 복사되었습니다. 엑셀이나 한글에 붙여넣기 하세요.');
+        }
+
+        // --- ACTIVITY MODAL LOGIC ---
+        let currentModalContext = { stdId: null, strategy: null, eventId: null };
+
+        function openActivityModal(stdId, strategy, eventId) {
+            const std = allStandards.find(s => s.id === stdId);
+            if (!std) return;
+
+            currentModalContext = { stdId, strategy, eventId };
+
+            const modal = document.getElementById('activity-modal');
+            const infoBar = document.getElementById('modal-info');
+
+            infoBar.innerHTML = `<strong>성취기준:</strong> [${std.code}] ${std.definition} | <strong>전략:</strong> <span style="color:var(--vol-1)">${strategy}</span> | <strong>사태:</strong> ${eventId}`;
+
+            // 전략별 분기 처리 준비
+            renderActivityUI(strategy, stdId, eventId);
+
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeActivityModal() {
+            document.getElementById('activity-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderActivityUI(strategy, stdId, eventId) {
+            const body = document.getElementById('modal-body');
+            const saveBtn = document.getElementById('save-activity-btn');
+            saveBtn.innerText = "작성 완료 (지도안 반영)";
+
+            // 데이터 구조: stdId -> { eventId -> { strategy, data } }
+            if (!activityDataStore[stdId]) activityDataStore[stdId] = {};
+            if (!activityDataStore[stdId][eventId]) activityDataStore[stdId][eventId] = { strategy, data: {} };
+
+            // 만약 클릭한 전략이 이전에 저장된 전략과 다르다면 데이터 초기화 (선택 사항)
+            if (activityDataStore[stdId][eventId].strategy !== strategy) {
+                activityDataStore[stdId][eventId] = { strategy, data: {} };
+            }
+
+            const data = activityDataStore[stdId][eventId].data;
+
+            // 실시간 저장 헬퍼: 특정 사태의 데이터만 업데이트
+            window.updateActivityState = (key, val) => {
+                activityDataStore[stdId][eventId].data[key] = val;
+            };
+
+            switch (strategy) {
+                case 'KWL':
+                    body.innerHTML = `
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px;">
+                            <div style="background:#fefce8; padding:20px; border-radius:12px; border:1px solid #fef08a;">
+                                <h4 style="margin-top:0; color:#854d0e;">[K] 알고 있는 것</h4>
+                                <p style="font-size:0.8rem; color:#a16207; margin-bottom:10px;">이 주제에 대해 이미 알고 있는 내용을 적어보세요.</p>
+                                <textarea style="width:100%; height:250px; border:1px solid #fde047; border-radius:8px; padding:12px; font-size:0.9rem;" 
+                                    oninput="updateActivityState('k', this.value)" placeholder="이미 알고 있는 사실이나 경험...">${data.k || ''}</textarea>
+                            </div>
+                            <div style="background:#eff6ff; padding:20px; border-radius:12px; border:1px solid #dbeafe;">
+                                <h4 style="margin-top:0; color:#1e40af;">[W] 알고 싶은 것</h4>
+                                <p style="font-size:0.8rem; color:#2563eb; margin-bottom:10px;">이 주제에서 궁금하거나 더 배우고 싶은 점은 무엇인가요?</p>
+                                <textarea style="width:100%; height:250px; border:1px solid #bfdbfe; border-radius:8px; padding:12px; font-size:0.9rem;" 
+                                    oninput="updateActivityState('w', this.value)" placeholder="질문이나 탐구하고 싶은 내용...">${data.w || ''}</textarea>
+                            </div>
+                            <div style="background:#f0fdf4; padding:20px; border-radius:12px; border:1px solid #dcfce7;">
+                                <h4 style="margin-top:0; color:#166534;">[L] 새로 배운 것</h4>
+                                <p style="font-size:0.8rem; color:#16a34a; margin-bottom:10px;">활동을 통해 새롭게 깨닫거나 알게 된 점을 정리해 보세요.</p>
+                                <textarea style="width:100%; height:250px; border:1px solid #bbf7d0; border-radius:8px; padding:12px; font-size:0.9rem;" 
+                                    oninput="updateActivityState('l', this.value)" placeholder="배운 내용과 느낀 점...">${data.l || ''}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case 'SQ3R':
+                    const currentStep = data.step || 0;
+                    const steps = [
+                        { id: 's', label: '훑어보기', desc: '제목, 목차, 그림을 보고 전체 내용을 파악하세요.' },
+                        { id: 'q', label: '질문하기', desc: '내용을 읽으며 해결하고 싶은 질문을 만드세요.' },
+                        { id: 'r1', label: '읽기', desc: '질문의 답을 찾으며 자세히 읽으세요.' },
+                        { id: 'r2', label: '암송', desc: '읽은 내용을 확인하고 중요한 부분을 요약하세요.' },
+                        { id: 'r3', label: '복습', desc: '전체 내용을 다시 한번 정리하세요.' }
+                    ];
+
+                    body.innerHTML = `
+                        <div style="background:#f1f5f9; padding:40px; border-radius:24px; max-width:800px; margin:0 auto;">
+                            <!-- Progress Bar -->
+                            <div style="display:flex; justify-content:space-between; margin-bottom:40px; position:relative;">
+                                <div style="position:absolute; top:20px; left:0; width:100%; height:4px; background:#e2e8f0; z-index:0;"></div>
+                                <div style="position:absolute; top:20px; left:0; width:${(currentStep / 4) * 100}%; height:4px; background:var(--vol-1); z-index:0; transition:width 0.4s ease;"></div>
+                                ${steps.map((s, idx) => `
+                                    <div style="z-index:1; text-align:center;">
+                                        <div style="width:40px; height:40px; border-radius:50%; background:${idx <= currentStep ? 'var(--vol-1)' : '#fff'}; color:${idx <= currentStep ? '#fff' : '#94a3b8'}; border:2px solid ${idx <= currentStep ? 'var(--vol-1)' : '#e2e8f0'}; display:flex; align-items:center; justify-content:center; font-weight:800; margin-bottom:10px; transition:all 0.3s; cursor:pointer;"
+                                            onclick="updateActivityState('step', ${idx}); renderActivityUI('${strategy}', '${stdId}', '${eventId}')">
+                                            ${idx + 1}
+                                        </div>
+                                        <span style="font-size:0.8rem; font-weight:700; color:${idx <= currentStep ? 'var(--vol-1)' : '#64748b'};">${s.label}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <!-- Step Content -->
+                            <div style="background:#fff; padding:30px; border-radius:16px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0; color:var(--vol-1); display:flex; align-items:center; gap:10px;">
+                                    <span style="background:var(--vol-1); color:#fff; padding:4px 12px; border-radius:8px; font-size:1rem;">단계 ${currentStep + 1}</span>
+                                    ${steps[currentStep].label}
+                                </h3>
+                                <p style="color:#64748b; margin-bottom:20px; font-size:0.95rem;">${steps[currentStep].desc}</p>
+                                <textarea style="width:100%; height:180px; border:2px solid #f1f5f9; border-radius:12px; padding:20px; font-size:1.1rem; line-height:1.6; outline:none; transition:border-color 0.2s;"
+                                    onfocus="this.style.borderColor='var(--vol-1)'"
+                                    onblur="this.style.borderColor='#f1f5f9'"
+                                    oninput="updateActivityState('${steps[currentStep].id}', this.value)" 
+                                    placeholder="여기에 내용을 입력해 주세요...">${data[steps[currentStep].id] || ''}</textarea>
+                                
+                                <div style="display:flex; justify-content:space-between; margin-top:30px;">
+                                    <button style="padding:10px 20px; border:none; background:#f1f5f9; border-radius:8px; font-weight:700; color:#64748b; cursor:pointer;"
+                                        ${currentStep === 0 ? 'disabled style="opacity:0.5; cursor:default;"' : ''}
+                                        onclick="updateActivityState('step', ${currentStep - 1}); renderActivityUI('${strategy}', '${stdId}', '${eventId}')">이전 단계</button>
+                                    
+                                    ${currentStep < 4 ? `
+                                        <button style="padding:10px 25px; border:none; background:var(--vol-2); border-radius:8px; font-weight:700; color:#fff; cursor:pointer; box-shadow:0 4px 6px rgba(139,92,246,0.2);"
+                                            onclick="updateActivityState('step', ${currentStep + 1}); renderActivityUI('${strategy}', '${stdId}', '${eventId}')">다음 단계</button>
+                                    ` : `
+                                        <div style="background:var(--vol-1); color:#fff; padding:10px 20px; border-radius:8px; font-weight:800; animation:pulse 2s infinite;">마지막 단계입니다! 최종 작성을 눌러주세요.</div>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '마인드맵':
+                    body.innerHTML = `
+                        <div style="background:#f0f9ff; padding:40px; border-radius:24px; border:1px solid #bae6fd; position:relative; overflow:hidden;">
+                            <h4 style="margin-top:0; color:#0369a1; text-align:center; font-size:1.5rem; margin-bottom:40px;">생각의 나무 (Mind Map)</h4>
+                            
+                            <!-- Tree Visualization (Conceptual) -->
+                            <div style="display:flex; flex-direction:column; align-items:center; gap:30px; position:relative;">
+                                <!-- Top Branches -->
+                                <div style="display:flex; gap:100px;">
+                                    <div class="mindmap-node" style="background:#fff; padding:15px; border-radius:15px; border:2px solid #7dd3fc; width:200px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                                        <label style="display:block; font-weight:800; color:#0284c7; margin-bottom:8px;">1. 핵심내용</label>
+                                        <textarea style="width:100%; height:60px; border:none; outline:none; resize:none;" oninput="updateActivityState('b1', this.value)">${data.b1 || ''}</textarea>
+                                    </div>
+                                    <div class="mindmap-node" style="background:#fff; padding:15px; border-radius:15px; border:2px solid #7dd3fc; width:200px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                                        <label style="display:block; font-weight:800; color:#0284c7; margin-bottom:8px;">2. 세부사항</label>
+                                        <textarea style="width:100%; height:60px; border:none; outline:none; resize:none;" oninput="updateActivityState('b2', this.value)">${data.b2 || ''}</textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Center Root -->
+                                <div style="background:var(--vol-1); padding:25px; border-radius:50px; width:250px; text-align:center; color:#fff; box-shadow:0 10px 15px rgba(0,0,0,0.1); border:4px solid #fff; z-index:2;">
+                                    <label style="display:block; font-size:0.8rem; font-weight:800; margin-bottom:5px; opacity:0.9;">중심 주제</label>
+                                    <input type="text" style="width:100%; border:none; background:transparent; text-align:center; font-weight:800; color:#fff; font-size:1.2rem; outline:none;" 
+                                        oninput="updateActivityState('center', this.value)" value="${data.center || ''}" placeholder="주제 입력">
+                                </div>
+
+                                <!-- Bottom Branches -->
+                                <div style="display:flex; gap:100px;">
+                                    <div class="mindmap-node" style="background:#fff; padding:15px; border-radius:15px; border:2px solid #7dd3fc; width:200px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                                        <label style="display:block; font-weight:800; color:#0284c7; margin-bottom:8px;">3. 관련사례</label>
+                                        <textarea style="width:100%; height:60px; border:none; outline:none; resize:none;" oninput="updateActivityState('b3', this.value)">${data.b3 || ''}</textarea>
+                                    </div>
+                                    <div class="mindmap-node" style="background:#fff; padding:15px; border-radius:15px; border:2px solid #7dd3fc; width:200px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                                        <label style="display:block; font-weight:800; color:#0284c7; margin-bottom:8px;">4. 나의생각</label>
+                                        <textarea style="width:100%; height:60px; border:none; outline:none; resize:none;" oninput="updateActivityState('b4', this.value)">${data.b4 || ''}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '사건 흐름도':
+                    body.innerHTML = `
+                        <div style="background:#faf5ff; padding:40px; border-radius:24px; border:1px solid #e9d5ff;">
+                            <h4 style="margin-top:0; color:#7e22ce; margin-bottom:30px; text-align:center; font-size:1.5rem;">사건 흐름도 (Sequence Chart)</h4>
+                            <div style="display:flex; flex-direction:column; gap:20px; max-width:600px; margin:0 auto;">
+                                <div style="background:white; padding:25px; border-radius:20px; border:2px solid #d8b4fe; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px; color:#7e22ce; font-weight:800;">
+                                        <span style="background:#7e22ce; color:#fff; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:0.8rem;">1</span>
+                                        [발단] 사건의 시작
+                                    </div>
+                                    <textarea style="width:100%; height:100px; border:none; outline:none; font-size:1rem; line-height:1.6;" oninput="updateActivityState('start', this.value)" placeholder="언제, 어디서, 누가 있는지 적어보세요.">${data.start || ''}</textarea>
+                                </div>
+
+                                <div style="display:flex; justify-content:center; color:#d8b4fe;"><i data-lucide="chevrons-down" size="32"></i></div>
+
+                                <div style="background:white; padding:25px; border-radius:20px; border:3px solid #7e22ce; box-shadow:0 8px 15px rgba(126,34,206,0.1);">
+                                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px; color:#7e22ce; font-weight:800;">
+                                        <span style="background:#7e22ce; color:#fff; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:0.8rem;">2</span>
+                                        [전개] 주요 갈등
+                                    </div>
+                                    <textarea style="width:100%; height:120px; border:none; outline:none; font-size:1rem; line-height:1.6;" oninput="updateActivityState('process', this.value)" placeholder="문제 상황과 갈등 내용을 구체적으로 적어보세요.">${data.process || ''}</textarea>
+                                </div>
+
+                                <div style="display:flex; justify-content:center; color:#d8b4fe;"><i data-lucide="chevrons-down" size="32"></i></div>
+
+                                <div style="background:white; padding:25px; border-radius:20px; border:2px solid #d8b4fe; box-shadow:0 4px 6px rgba(0,0,0,0.05);">
+                                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px; color:#7e22ce; font-weight:800;">
+                                        <span style="background:#7e22ce; color:#fff; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:0.8rem;">3</span>
+                                        [결말] 해결 및 결과
+                                    </div>
+                                    <textarea style="width:100%; height:100px; border:none; outline:none; font-size:1rem; line-height:1.6;" oninput="updateActivityState('end', this.value)" placeholder="사건이 어떻게 해결되었고 어떤 교훈을 주나요?">${data.end || ''}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '원인과 결과':
+                    body.innerHTML = `
+                        <div style="background:#f0fdf4; padding:40px; border-radius:24px; border:1px solid #bbf7d0;">
+                            <h4 style="margin-top:0; color:#15803d; margin-bottom:30px; text-align:center; font-size:1.5rem;">원인과 결과 분석</h4>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:40px; position:relative;">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; border:4px solid #16a34a; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; z-index:2; color:#16a34a;">
+                                    <i data-lucide="arrow-right-left" size="30"></i>
+                                </div>
+                                <div style="background:white; padding:30px; border-radius:20px; border:2px dashed #15803d; box-shadow:0 4px 6px rgba(0,0,0,0.02);">
+                                    <label style="display:flex; align-items:center; gap:10px; font-weight:800; color:#15803d; margin-bottom:20px; font-size:1.1rem;">
+                                        <i data-lucide="help-circle"></i> [원인] 왜 일어났나요?
+                                    </label>
+                                    <textarea style="width:100%; height:250px; border:none; outline:none; font-size:1rem; line-height:1.7;" oninput="updateActivityState('cause', this.value)" placeholder="사건이나 상황이 발생한 근본적인 이유를 기록하세요.">${data.cause || ''}</textarea>
+                                </div>
+                                <div style="background:white; padding:30px; border-radius:20px; border:3px solid #16a34a; box-shadow:0 10px 15px rgba(22,163,74,0.05);">
+                                    <label style="display:flex; align-items:center; gap:10px; font-weight:800; color:#16a34a; margin-bottom:20px; font-size:1.1rem;">
+                                        <i data-lucide="alert-circle"></i> [결과] 어떤 일이 생겼나요?
+                                    </label>
+                                    <textarea style="width:100%; height:250px; border:none; outline:none; font-size:1rem; line-height:1.7;" oninput="updateActivityState('effect', this.value)" placeholder="그 원인으로 인해 나타난 변화나 사건의 결과를 기록하세요.">${data.effect || ''}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '비교와 대조':
+                    body.innerHTML = `
+                        <div style="background:#fff7ed; padding:40px; border-radius:24px; border:1px solid #ffedd5;">
+                            <h4 style="margin-top:0; color:#c2410c; margin-bottom:30px; text-align:center; font-size:1.5rem;">비교와 대조 (Venn Diagram)</h4>
+                            <div style="display:flex; justify-content:center; height:450px; position:relative;">
+                                <!-- Left Circle (A) -->
+                                <div style="width:350px; height:350px; background:#fff; border:3px solid #fb923c; border-radius:50%; position:absolute; left:50px; top:0; padding:60px 80px 40px 40px; box-shadow:inset 0 0 20px rgba(251,146,60,0.05);">
+                                    <input type="text" style="width:100%; border:none; border-bottom:1px solid #fdba74; font-weight:800; color:#c2410c; margin-bottom:15px; outline:none;" 
+                                        placeholder="대상 A 입력" oninput="updateActivityState('targetA', this.value)" value="${data.targetA || ''}">
+                                    <textarea style="width:100%; height:180px; border:none; outline:none; background:transparent; font-size:0.95rem; line-height:1.6;" 
+                                        placeholder="A만의 독특한 특징..." oninput="updateActivityState('a', this.value)">${data.a || ''}</textarea>
+                                </div>
+                                <!-- Right Circle (B) -->
+                                <div style="width:350px; height:350px; background:#fff; border:3px solid #fb923c; border-radius:50%; position:absolute; right:50px; top:0; padding:60px 40px 40px 80px; box-shadow:inset 0 0 20px rgba(251,146,60,0.05);">
+                                    <input type="text" style="width:100%; border:none; border-bottom:1px solid #fdba74; font-weight:800; color:#c2410c; margin-bottom:15px; outline:none; text-align:right;" 
+                                        placeholder="대상 B 입력" oninput="updateActivityState('targetB', this.value)" value="${data.targetB || ''}">
+                                    <textarea style="width:100%; height:180px; border:none; outline:none; background:transparent; font-size:0.95rem; line-height:1.6; text-align:right;" 
+                                        placeholder="B만의 독특한 특징..." oninput="updateActivityState('b', this.value)">${data.b || ''}</textarea>
+                                </div>
+                                <!-- Intersection (Common) -->
+                                <div style="width:220px; height:220px; background:rgba(255,255,255,0.9); border:3px solid #ea580c; border-radius:50%; position:absolute; left:50%; top:65px; transform:translateX(-50%); z-index:2; padding:40px 20px; display:flex; flex-direction:column; align-items:center; box-shadow:0 10px 15px rgba(234,88,12,0.1);">
+                                    <label style="font-weight:900; color:#ea580c; margin-bottom:10px;">공통점</label>
+                                    <textarea style="width:100%; height:120px; border:none; outline:none; background:transparent; text-align:center; font-size:0.95rem; line-height:1.5; font-weight:600;" 
+                                        placeholder="둘의 비슷한 점..." oninput="updateActivityState('common', this.value)">${data.common || ''}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '캐릭터 차트':
+                    body.innerHTML = `
+                        <div style="background:#f8fafc; padding:30px; border-radius:16px; border:1px solid #e2e8f0;">
+                            <h4 style="margin-top:0; margin-bottom:20px; color:#334155;"><i data-lucide="users" style="vertical-align:middle; margin-right:8px;"></i> 인물 분석 차트</h4>
+                            <table class="data-table" style="background:white; border-collapse:collapse; width:100%;">
+                                <tr>
+                                    <th width="25%" style="background:#f1f5f9; border:1px solid #e2e8f0; padding:12px;">인물 이름</th>
+                                    <td style="border:1px solid #e2e8f0; padding:0;"><input type="text" style="width:100%; border:none; padding:12px; outline:none;" 
+                                        oninput="updateActivityState('name', this.value)" value="${data.name || ''}" placeholder="인물의 이름을 입력하세요."></td>
+                                </tr>
+                                <tr>
+                                    <th style="background:#f1f5f9; border:1px solid #e2e8f0; padding:12px;">성격 및 특징</th>
+                                    <td style="border:1px solid #e2e8f0; padding:0;"><textarea style="width:100%; height:80px; border:none; padding:12px; outline:none; resize:none;" 
+                                        oninput="updateActivityState('trait', this.value)" placeholder="성격, 가치관, 처한 상황 등">${data.trait || ''}</textarea></td>
+                                </tr>
+                                <tr>
+                                    <th style="background:#f1f5f9; border:1px solid #e2e8f0; padding:12px;">주요 대사/행동</th>
+                                    <td style="border:1px solid #e2e8f0; padding:0;"><textarea style="width:100%; height:100px; border:none; padding:12px; outline:none; resize:none;" 
+                                        oninput="updateActivityState('action', this.value)" placeholder="인상 깊은 말이나 결정적인 행동">${data.action || ''}</textarea></td>
+                                </tr>
+                                <tr>
+                                    <th style="background:#f1f5f9; border:1px solid #e2e8f0; padding:12px;">인물에 대한 나의 평가</th>
+                                    <td style="border:1px solid #e2e8f0; padding:0;"><textarea style="width:100%; height:100px; border:none; padding:12px; outline:none; resize:none;" 
+                                        oninput="updateActivityState('eval', this.value)" placeholder="나였다면 어땠을지, 인물의 선택에 대한 생각">${data.eval || ''}</textarea></td>
+                                </tr>
+                            </table>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case 'QAR':
+                    body.innerHTML = `
+                        <div style="background:#fef2f2; padding:30px; border-radius:16px; border:1px solid #fecaca;">
+                            <h4 style="margin-top:0; color:#991b1b; margin-bottom:20px;">질문-답변 관계 (QAR)</h4>
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; font-weight:700; margin-bottom:8px;">1. 나의 질문</label>
+                                <textarea style="width:100%; height:80px; border:1px solid #fca5a5; border-radius:8px; padding:12px;" 
+                                    oninput="updateActivityState('q', this.value)" placeholder="텍스트에서 궁금한 점을 질문으로 만들어 보세요.">${data.q || ''}</textarea>
+                            </div>
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; font-weight:700; margin-bottom:8px;">2. 질문 유형 선택</label>
+                                <select style="width:100%; padding:12px; border:1px solid #fca5a5; border-radius:8px; outline:none;" 
+                                    onchange="updateActivityState('type', this.value)">
+                                    <option value="" ${!data.type ? 'selected' : ''}>--- 유형을 선택하세요 ---</option>
+                                    <option value="바로 여기" ${data.type === '바로 여기' ? 'selected' : ''}>바로 여기 (답이 글에 직접 명시됨)</option>
+                                    <option value="생각하고 찾기" ${data.type === '생각하고 찾기' ? 'selected' : ''}>생각하고 찾기 (글의 여러 부분을 종합해야 함)</option>
+                                    <option value="저자와 나" ${data.type === '저자와 나' ? 'selected' : ''}>저자와 나 (나의 배경지식과 글의 정보를 연결해야 함)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display:block; font-weight:700; margin-bottom:8px;">3. 답변 내용</label>
+                                <textarea style="width:100%; height:120px; border:1px solid #fca5a5; border-radius:8px; padding:12px;" 
+                                    oninput="updateActivityState('a', this.value)" placeholder="선택한 유형에 맞춰 답변을 상세히 적어보세요.">${data.a || ''}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '예측 안내하기':
+                    body.innerHTML = `
+                        <div style="background:#fff7ed; padding:30px; border-radius:16px; border:1px solid #ffedd5;">
+                            <h4 style="margin-top:0; color:#9a3412; margin-bottom:20px;">독서 전: 예측 안내하기</h4>
+                            <div style="margin-bottom:25px;">
+                                <label style="display:block; font-weight:700; margin-bottom:8px; color:#c2410c;">[질문 1] 제목과 삽화를 보고 예상되는 내용은 무엇인가요?</label>
+                                <textarea style="width:100%; height:120px; border:1px solid #fed7aa; border-radius:8px; padding:15px; font-size:1rem;" 
+                                    oninput="updateActivityState('p1', this.value)" placeholder="어떤 이야기가 펼쳐질지 상상해 보세요.">${data.p1 || ''}</textarea>
+                            </div>
+                            <div>
+                                <label style="display:block; font-weight:700; margin-bottom:8px; color:#c2410c;">[질문 2] 그렇게 생각한 근거는 무엇인가요?</label>
+                                <textarea style="width:100%; height:120px; border:1px solid #fed7aa; border-radius:8px; padding:15px; font-size:1rem;" 
+                                    oninput="updateActivityState('p2', this.value)" placeholder="삽화의 특징이나 제목의 키워드 등 근거를 적어보세요.">${data.p2 || ''}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                case '요약하기':
+                    body.innerHTML = `
+                        <div style="background:#f0f9ff; padding:30px; border-radius:16px; border:1px solid #bae6fd;">
+                            <h4 style="margin-top:0; color:#0369a1; margin-bottom:20px;">독서 후: 요약하기</h4>
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; font-weight:700; margin-bottom:8px;">1. 핵심 키워드 3개</label>
+                                <input type="text" style="width:100%; padding:12px; border:1px solid #7dd3fc; border-radius:8px;" 
+                                    oninput="updateActivityState('keywords', this.value)" value="${data.keywords || ''}" placeholder="예: 양심, 정직, 실천">
+                            </div>
+                            <div style="margin-bottom:20px;">
+                                <label style="display:block; font-weight:700; margin-bottom:8px;">2. 문장으로 요약하기</label>
+                                <textarea style="width:100%; height:100px; border:1px solid #7dd3fc; border-radius:8px; padding:12px;" 
+                                    oninput="updateActivityState('summary', this.value)" placeholder="글의 전체 내용을 2~3문장으로 정리해 보세요.">${data.summary || ''}</textarea>
+                            </div>
+                            <div>
+                                <label style="display:block; font-weight:700; margin-bottom:8px;">3. 이 글이 주는 도덕적 교훈</label>
+                                <textarea style="width:100%; height:100px; border:1px solid #7dd3fc; border-radius:8px; padding:12px;" 
+                                    oninput="updateActivityState('lesson', this.value)" placeholder="우리의 삶에 어떤 메시지를 주나요?">${data.lesson || ''}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+                    break;
+
+                default:
+                    body.innerHTML = `
+                        <div class="activity-placeholder">
+                            <i data-lucide="construction" size="48"></i>
+                            <p><strong>[${strategy}] 독서 활동지 양식 준비 중</strong><br>성취기준에 맞춰 활동 내용을 설계해 주세요.</p>
+                            <textarea style="width:100%; height:200px; margin-top:20px; border-radius:12px; border:1px solid #cbd5e1; padding:15px;" 
+                                oninput="updateActivityState('text', this.value)" placeholder="활동 계획 또는 결과물을 자유롭게 입력해 주세요.">${data.text || ''}</textarea>
+                        </div>
+                    `;
+                    saveBtn.onclick = () => saveActivityData(stdId, strategy, eventId);
+            }
+            lucide.createIcons();
+        }
+
+        function saveActivityData(stdId, strategy, eventId) {
+            // 데이터 구조: stdId -> { eventId -> { strategy, data } }
+            if (!activityDataStore[stdId] || !activityDataStore[stdId][eventId]) {
+                alert('데이터를 저장할 수 없습니다. 다시 시도해 주세요.');
+                return;
+            }
+
+            const context = activityDataStore[stdId][eventId];
+            const data = context.data;
+
+            const std = allStandards.find(s => s.id === stdId);
+            if (!std) return;
+
+            const table = document.getElementById(`detail-plan-table-${std.code}`);
+            if (table) {
+                // 특정 사태 ID를 가진 행만 타겟팅 (data-event-id 속성 활용)
+                const row = table.querySelector(`tr[data-event-id="${eventId}"]`);
+                if (row) {
+                    const activityCell = row.cells[2]; // 교수·학습 활동 칸
+
+                    let resultHtml = `<div class="activity-result-box" style="margin-top:15px; padding:16px; background:#f8fafc; border:1.5px solid var(--vol-1); border-radius:12px; font-size:0.9rem; color:#1e293b; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">`;
+                    resultHtml += `<div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; color:var(--vol-1); font-weight:800;">
+                        <i data-lucide="check-circle" size="16"></i> 독서 활동 결과: ${strategy}
+                    </div>`;
+
+                    switch (strategy) {
+                        case 'KWL':
+                            resultHtml += `<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:0.85rem;">
+                                    <div style="background:#fff; padding:8px; border-radius:6px; border:1px solid #eee;"><strong>[K]</strong> ${data.k || '-'}</div>
+                                    <div style="background:#fff; padding:8px; border-radius:6px; border:1px solid #eee;"><strong>[W]</strong> ${data.w || '-'}</div>
+                                    <div style="background:#fff; padding:8px; border-radius:6px; border:1px solid #eee;"><strong>[L]</strong> ${data.l || '-'}</div>
+                                </div>`;
+                            break;
+                        case 'SQ3R':
+                            resultHtml += `<div style="line-height:1.5;">
+                                    <strong>[S]</strong> ${data.s || '-'}<br><strong>[Q]</strong> ${data.q || '-'}<br>
+                                    <strong>[R1]</strong> ${data.r1 || '-'}<br><strong>[R2]</strong> ${data.r2 || '-'}<br><strong>[R3]</strong> ${data.r3 || '-'}
+                                </div>`;
+                            break;
+                        case '마인드맵':
+                            resultHtml += `<div style="line-height:1.5;">
+                                    <strong>주제:</strong> ${data.center || '-'}<br>
+                                    <strong>핵심:</strong> ${data.b1 || '-'} | <strong>세부:</strong> ${data.b2 || '-'}<br>
+                                    <strong>사례:</strong> ${data.b3 || '-'} | <strong>생각:</strong> ${data.b4 || '-'}
+                                </div>`;
+                            break;
+                        case '사건 흐름도':
+                            resultHtml += `<div style="display:flex; align-items:center; gap:5px; font-size:0.85rem; flex-wrap:wrap;">
+                                <span style="background:#f3e8ff; padding:2px 6px; border-radius:4px;">발단: ${data.start || '-'}</span> → 
+                                <span style="background:#f3e8ff; padding:2px 6px; border-radius:4px;">전개: ${data.process || '-'}</span> → 
+                                <span style="background:#f3e8ff; padding:2px 6px; border-radius:4px;">결말: ${data.end || '-'}</span>
+                            </div>`;
+                            break;
+                        case '원인과 결과':
+                            resultHtml += `<strong>[원인]</strong> ${data.cause || '-'}<br><strong>[결과]</strong> ${data.effect || '-'}`;
+                            break;
+                        case '비교와 대조':
+                            resultHtml += `<div style="line-height:1.5;">
+                                <strong>${data.targetA || 'A'}:</strong> ${data.a || '-'}<br>
+                                <strong>${data.targetB || 'B'}:</strong> ${data.b || '-'}<br>
+                                <strong>공통:</strong> ${data.common || '-'}
+                            </div>`;
+                            break;
+                        case '캐릭터 차트':
+                            resultHtml += `<div style="line-height:1.6;">
+                                    <strong>인물:</strong> ${data.name || '-'}<br>
+                                    <strong>특징:</strong> ${data.trait || '-'}<br>
+                                    <strong>행동:</strong> ${data.action || '-'}<br>
+                                    <strong>생각:</strong> ${data.eval || '-'}
+                                </div>`;
+                            break;
+                        case 'QAR':
+                            resultHtml += `<div style="line-height:1.6;">
+                                    <strong>Q (${data.type || '유형미지정'}):</strong> ${data.q || '-'}<br>
+                                    <strong>A:</strong> ${data.a || '-'}
+                                </div>`;
+                            break;
+                        case '예측 안내하기':
+                            resultHtml += `<div style="line-height:1.6;">
+                                    <strong>예측:</strong> ${data.p1 || '-'}<br>
+                                    <strong>근거:</strong> ${data.p2 || '-'}
+                                </div>`;
+                            break;
+                        case '요약하기':
+                            resultHtml += `<div style="line-height:1.6;">
+                                    <strong>핵심단어:</strong> ${data.keywords || '-'}<br>
+                                    <strong>요약:</strong> ${data.summary || '-'}<br>
+                                    <strong>교훈:</strong> ${data.lesson || '-'}
+                                </div>`;
+                            break;
+                        default:
+                            resultHtml += `<div style="white-space:pre-wrap;">${data.text || '내용 없음'}</div>`;
+                    }
+                    resultHtml += `</div>`;
+
+                    // 기존 동일한 사태 내의 결과 박스가 있으면 교체, 없으면 추가
+                    const oldBox = activityCell.querySelector('.activity-result-box');
+                    if (oldBox) oldBox.remove();
+
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = resultHtml;
+                    activityCell.appendChild(tempDiv.firstChild);
+                }
+            }
+
+            alert(`${strategy} 활동이 해당 수업 사태에 성공적으로 기록되었습니다.`);
+            closeActivityModal();
+            lucide.createIcons();
+        }
+
+        // --- WORKSHEET DROPDOWN FUNCTIONS ---
+        function toggleWorksheetDropdown(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('ws-dropdown-menu');
+            const isVisible = menu.style.display === 'block';
+
+            // Close all other instances if any (though here only one)
+            menu.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                // Change main button state if needed
+            }
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function (e) {
+            const menu = document.getElementById('ws-dropdown-menu');
+            if (menu && menu.style.display === 'block') {
+                if (!e.target.closest('.ws-dropdown-container')) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+
+        function closeWsDropdown() {
+            const menu = document.getElementById('ws-dropdown-menu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        function copyWorksheetTable() {
+            closeWsDropdown();
+            // ... (rest of the copy logic)
+            const printArea = document.getElementById('worksheet-print-area');
+            const stdInfo = document.getElementById('ws-std-info');
+            const wsBody = document.getElementById('ws-body');
+
+            if (basket.size === 0) {
+                alert('바구니에 성취기준을 담은 후 진행하세요.');
+                return;
+            }
+
+            wsBody.innerHTML = '';
+            stdInfo.innerHTML = '';
+
+            const selectedStds = Array.from(basket).map(id => allStandards.find(s => s.id === id)).filter(Boolean);
+            let headerHtml = '<div style="border:2px solid #000; padding:15px; margin-bottom:20px; font-family:\'Malgun Gothic\';">';
+            selectedStds.forEach(std => {
+                const areaName = std.areaId ? AREA_MAP[std.areaId].fullName : '기타 단원';
+                headerHtml += `<div style="margin-bottom:8px;"><strong>단원:</strong> ${areaName} | <strong>성취기준:</strong> [${std.code}] ${std.definition}</div>`;
+            });
+            headerHtml += '</div>';
+            stdInfo.innerHTML = headerHtml;
+
+            let hasActivity = false;
+            selectedStds.forEach(std => {
+                GAGNE_EVENTS.forEach(event => {
+                    const activity = activityDataStore[std.id] && activityDataStore[std.id][event.id];
+                    if (activity && activity.strategy) {
+                        hasActivity = true;
+                        const strategy = activity.strategy;
+                        const data = activity.data || {};
+
+                        // HWP loves Tables for layout retention
+                        let sectionHtml = `
+                            <table style="width:100%; border-collapse:collapse; margin-bottom:25px; border:1px solid #000; font-family:'Malgun Gothic';">
+                                <tr>
+                                    <td style="padding:12px; background:#f1f5f9; border:1px solid #000; font-weight:bold; font-size:1.1rem;">
+                                        [${strategy} 활동]
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:20px; border:1px solid #000; background:#fff; line-height:1.6;">
+                                        ${getStrategyWorksheetHtml(strategy, data)}
+                                    </td>
+                                </tr>
+                            </table>
+                        `;
+                        wsBody.insertAdjacentHTML('beforeend', sectionHtml);
+                    }
+                });
+            });
+
+            if (!hasActivity) {
+                alert('지도안에서 선택된 독서 전략이 없습니다.');
+                return;
+            }
+
+            printArea.style.display = 'block';
+
+            const range = document.createRange();
+            range.selectNode(printArea);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            try {
+                const success = document.execCommand('copy');
+                if (success) {
+                    alert('학습지 표 양식이 복사되었습니다.\n한글(HWP)이나 워드에 [원본 서식 유지]로 붙여넣으세요.');
+                    closeWsChoiceModal();
+                }
+            } catch (err) {
+                alert('복사 중 오류가 발생했습니다.');
+            }
+
+            window.getSelection().removeAllRanges();
+            printArea.style.display = 'none';
+        }
+
+        async function downloadWorksheetPDF() {
+            closeWsDropdown(); // Close dropdown before starting
+            const printArea = document.getElementById('worksheet-print-area');
+            const stdInfo = document.getElementById('ws-std-info');
+            const wsBody = document.getElementById('ws-body');
+
+            if (basket.size === 0) {
+                alert('바구니에 성취기준을 담은 후 학습지를 생성하세요.');
+                return;
+            }
+
+            wsBody.innerHTML = '';
+            stdInfo.innerHTML = '';
+
+            const selectedStds = Array.from(basket).map(id => allStandards.find(s => s.id === id)).filter(Boolean);
+
+            let headerHtml = '';
+            selectedStds.forEach(std => {
+                const areaName = std.areaId ? AREA_MAP[std.areaId].fullName : '기타 단원';
+                headerHtml += `<div style="margin-bottom:8px;"><strong>단원:</strong> ${areaName} | <strong>성취기준:</strong> [${std.code}] ${std.definition}</div>`;
+            });
+            stdInfo.innerHTML = headerHtml;
+
+            let hasActivity = false;
+            selectedStds.forEach(std => {
+                GAGNE_EVENTS.forEach(event => {
+                    const activity = activityDataStore[std.id] && activityDataStore[std.id][event.id];
+                    // '활동 데이터가 있거나' 또는 '해당 사태에 전략이 할당되어 있으면' (빈 칸이라도) 포함
+                    if (activity && activity.strategy) {
+                        hasActivity = true;
+                        const strategy = activity.strategy;
+                        const data = activity.data || {};
+
+                        let sectionHtml = `
+                            <div class="ws-section" style="border-bottom:1px dashed #e2e8f0; padding-bottom:20px; margin-bottom:20px;">
+                                <div class="ws-section-title">
+                                    <img src="image_6bbae2.png" style="width:36px; height:36px; object-fit:contain; margin-right:8px;" onerror="this.style.display='none'">
+                                    <i data-lucide="${getStrategyIcon(strategy)}" style="color:var(--vol-1); width:24px; height:24px;"></i>
+                                    <span style="margin-left:5px;">${strategy} 활동</span>
+                                </div>
+                                <div class="ws-content-box" style="background:#fff; border:1px solid #cbd5e1;">
+                                    ${getStrategyWorksheetHtml(strategy, data)}
+                                </div>
+                            </div>
+                        `;
+                        wsBody.insertAdjacentHTML('beforeend', sectionHtml);
+                    }
+                });
+            });
+
+            if (!hasActivity) {
+                alert('바구니에 담긴 성취기준에 대해 선택된 독서 전략이 없습니다. 지도안의 [독서 전략 태그]를 클릭하여 활동을 먼저 열어주세요.');
+                return;
+            }
+
+            printArea.style.display = 'block';
+            lucide.createIcons();
+
+            const options = {
+                margin: [10, 10, 10, 10],
+                filename: '도덕과_독서활동_학습지.pdf',
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: {
+                    scale: 3,
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true,
+                    letterRendering: true
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                // 아이콘 및 이미지 렌더링이 완료될 때까지 충분히 대기
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                await html2pdf().set(options).from(printArea).save();
+            } catch (err) {
+                console.error('PDF Download Error:', err);
+                alert('PDF 생성 중 오류가 발생했습니다.');
+            } finally {
+                printArea.style.display = 'none';
+            }
+        }
+
+        function getStrategyIcon(strategy) {
+            const icons = {
+                'KWL': 'brain',
+                '캐릭터 차트': 'user',
+                'QAR': 'help-circle',
+                '예측 안내하기': 'eye',
+                '요약하기': 'feather',
+                'SQ3R': 'clipboard-list',
+                '마인드맵': 'share-2',
+                '사건 흐름도': 'play-circle',
+                '원인과 결과': 'git-branch',
+                '비교와 대조': 'intersect'
+            };
+            return icons[strategy] || 'book-open';
+        }
+
+        function getStrategyWorksheetHtml(strategy, data) {
+            let html = '';
+            switch (strategy) {
+                case 'KWL':
+                    html += `<div class="ws-label">[K] 알고 있는 것</div><div class="ws-text">${data.k || ''}</div>`;
+                    html += `<div class="ws-label">[W] 알고 싶은 것</div><div class="ws-text">${data.w || ''}</div>`;
+                    html += `<div class="ws-label">[L] 새로 배운 것</div><div class="ws-text">${data.l || ''}</div>`;
+                    break;
+                case 'SQ3R':
+                    html += `<div class="ws-label">[S] 훑어보기</div><div class="ws-text">${data.s || ''}</div>`;
+                    html += `<div class="ws-label">[Q] 질문하기</div><div class="ws-text">${data.q || ''}</div>`;
+                    html += `<div class="ws-label">[R1] 읽기</div><div class="ws-text">${data.r1 || ''}</div>`;
+                    html += `<div class="ws-label">[R2] 암송하기</div><div class="ws-text">${data.r2 || ''}</div>`;
+                    html += `<div class="ws-label">[R3] 복습하기</div><div class="ws-text">${data.r3 || ''}</div>`;
+                    break;
+                case '마인드맵':
+                    html += `<div class="ws-label">중심 주제: ${data.center || ''}</div>`;
+                    html += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:10px;">
+                        <div><div class="ws-label">1. 핵심내용</div><div class="ws-text">${data.b1 || ''}</div></div>
+                        <div><div class="ws-label">2. 세부사항</div><div class="ws-text">${data.b2 || ''}</div></div>
+                        <div><div class="ws-label">3. 관련사례</div><div class="ws-text">${data.b3 || ''}</div></div>
+                        <div><div class="ws-label">4. 나의생각</div><div class="ws-text">${data.b4 || ''}</div></div>
+                    </div>`;
+                    break;
+                case '사건 흐름도':
+                    html += `<div class="ws-label">[발단]</div><div class="ws-text">${data.start || ''}</div>`;
+                    html += `<div class="ws-label">[전개]</div><div class="ws-text">${data.process || ''}</div>`;
+                    html += `<div class="ws-label">[결말]</div><div class="ws-text">${data.end || ''}</div>`;
+                    break;
+                case '원인과 결과':
+                    html += `<div class="ws-label">[원인] 왜 일어났나요?</div><div class="ws-text">${data.cause || ''}</div>`;
+                    html += `<div class="ws-label">[결과] 어떤 일이 생겼나요?</div><div class="ws-text">${data.effect || ''}</div>`;
+                    break;
+                case '비교와 대조':
+                    html += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div><div class="ws-label">대상 A: ${data.targetA || ''}</div><div class="ws-text">${data.a || ''}</div></div>
+                        <div><div class="ws-label">대상 B: ${data.targetB || ''}</div><div class="ws-text">${data.b || ''}</div></div>
+                    </div>`;
+                    html += `<div class="ws-label">공통점</div><div class="ws-text">${data.common || ''}</div>`;
+                    break;
+                case '캐릭터 차트':
+                    html += `<div class="ws-label">인물 이름: ${data.name || ''}</div>`;
+                    html += `<div class="ws-label">성격 및 특징</div><div class="ws-text">${data.trait || ''}</div>`;
+                    html += `<div class="ws-label">주요 대사/행동</div><div class="ws-text">${data.action || ''}</div>`;
+                    html += `<div class="ws-label">나의 평가</div><div class="ws-text">${data.eval || ''}</div>`;
+                    break;
+                case 'QAR':
+                    html += `<div class="ws-label">질문 (${data.type || ''})</div><div class="ws-text">${data.q || ''}</div>`;
+                    html += `<div class="ws-label">답변</div><div class="ws-text">${data.a || ''}</div>`;
+                    break;
+                case '예측 안내하기':
+                    html += `<div class="ws-label">예상되는 내용</div><div class="ws-text">${data.p1 || ''}</div>`;
+                    html += `<div class="ws-label">그렇게 생각한 근거</div><div class="ws-text">${data.p2 || ''}</div>`;
+                    break;
+                case '요약하기':
+                    html += `<div class="ws-label">핵심 키워드</div><div class="ws-text">${data.keywords || ''}</div>`;
+                    html += `<div class="ws-label">문장 요약</div><div class="ws-text">${data.summary || ''}</div>`;
+                    html += `<div class="ws-label">도덕적 교훈</div><div class="ws-text">${data.lesson || ''}</div>`;
+                    break;
+                default:
+                    html += `<div class="ws-text">${data.text || ''}</div>`;
+            }
+            return html;
         }
 
         setTimeout(initData, 100);

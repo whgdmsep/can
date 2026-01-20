@@ -1,0 +1,93 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/gagne-reading-strategies#> .
+
+### 1. Class Definitions (클래스 정의) ###
+
+ex:InstructionalEvent a owl:Class ;
+    rdfs:label "가네의 수업 사태" .
+
+ex:ReadingStrategy a owl:Class ;
+    rdfs:label "독서 전략" .
+
+### 2. Property Definitions (속성 정의) ###
+
+# 수업 사태에 적합한 독서 전략을 연결
+ex:hasApplicableStrategy a owl:ObjectProperty ;
+    rdfs:domain ex:InstructionalEvent ;
+    rdfs:range ex:ReadingStrategy ;
+    rdfs:label "적용 가능한 독서 전략" .
+
+# 독서 전략이 지원하는 인지 과정 (설명용)
+ex:supportsCognitiveProcess a owl:DatatypeProperty ;
+    rdfs:domain ex:ReadingStrategy ;
+    rdfs:range xsd:string ;
+    rdfs:label "지원하는 인지 과정" .
+
+### 3. Individuals: Reading Strategies (독서 전략 인스턴스) ###
+
+ex:Strat_Prediction a ex:ReadingStrategy ; rdfs:label "예측 안내하기" .
+ex:Strat_Brainstorming a ex:ReadingStrategy ; rdfs:label "브레인스토밍" .
+ex:Strat_KWL_W a ex:ReadingStrategy ; rdfs:label "KWL (W: 알고 싶은 것)" .
+ex:Strat_Skimming a ex:ReadingStrategy ; rdfs:label "훑어 읽기" .
+ex:Strat_KWL_K a ex:ReadingStrategy ; rdfs:label "KWL (K: 알고 있는 것)" .
+ex:Strat_MindMap a ex:ReadingStrategy ; rdfs:label "마인드맵" .
+ex:Strat_ThinkAloud a ex:ReadingStrategy ; rdfs:label "생각 말하기 (Think Aloud)" .
+ex:Strat_SQ3R_SQ a ex:ReadingStrategy ; rdfs:label "SQ3R (훑어보기 및 질문)" .
+ex:Strat_GraphicOrganizer a ex:ReadingStrategy ; rdfs:label "그래픽 조직자" .
+ex:Strat_StoryMap a ex:ReadingStrategy ; rdfs:label "이야기 지도" .
+ex:Strat_CharacterChart a ex:ReadingStrategy ; rdfs:label "캐릭터 차트" .
+ex:Strat_SQ3R_RR a ex:ReadingStrategy ; rdfs:label "SQ3R (읽기 및 암송)" .
+ex:Strat_QAR a ex:ReadingStrategy ; rdfs:label "QAR (질문-답변 관계)" .
+ex:Strat_Summarization a ex:ReadingStrategy ; rdfs:label "요약기법" .
+ex:Strat_KWL_L a ex:ReadingStrategy ; rdfs:label "KWL (L: 배운 것)" .
+ex:Strat_Discussion a ex:ReadingStrategy ; rdfs:label "연결된 담화 토론" .
+
+### 4. Individuals: Instructional Events & Mapping (수업 사태 및 매핑) ###
+
+# 1. 주의 획득
+ex:Event01_GainAttention a ex:InstructionalEvent ;
+    rdfs:label "주의 획득" ;
+    ex:hasApplicableStrategy ex:Strat_Prediction, ex:Strat_Brainstorming .
+
+# 2. 학습 목표 제시
+ex:Event02_InformObjectives a ex:InstructionalEvent ;
+    rdfs:label "학습 목표 제시" ;
+    ex:hasApplicableStrategy ex:Strat_KWL_W, ex:Strat_Skimming .
+
+# 3. 선수 학습 회상 촉진
+ex:Event03_StimulateRecall a ex:InstructionalEvent ;
+    rdfs:label "선수 학습 회상 촉진" ;
+    ex:hasApplicableStrategy ex:Strat_KWL_K, ex:Strat_MindMap .
+
+# 4. 자극 제시
+ex:Event04_PresentStimulus a ex:InstructionalEvent ;
+    rdfs:label "자극 제시" ;
+    ex:hasApplicableStrategy ex:Strat_ThinkAloud, ex:Strat_SQ3R_SQ .
+
+# 5. 학습 안내 제공
+ex:Event05_ProvideGuidance a ex:InstructionalEvent ;
+    rdfs:label "학습 안내 제공" ;
+    ex:hasApplicableStrategy ex:Strat_GraphicOrganizer, ex:Strat_StoryMap, ex:Strat_CharacterChart .
+
+# 6. 수행 유도
+ex:Event06_ElicitPerformance a ex:InstructionalEvent ;
+    rdfs:label "수행 유도" ;
+    ex:hasApplicableStrategy ex:Strat_SQ3R_RR, ex:Strat_QAR .
+
+# 7. 피드백 제공
+ex:Event07_ProvideFeedback a ex:InstructionalEvent ;
+    rdfs:label "피드백 제공" ;
+    ex:hasApplicableStrategy ex:Strat_Summarization .
+
+# 8. 수행 평가
+ex:Event08_AssessPerformance a ex:InstructionalEvent ;
+    rdfs:label "수행 평가" ;
+    ex:hasApplicableStrategy ex:Strat_Summarization, ex:Strat_MindMap .
+
+# 9. 파지 및 전이 증진
+ex:Event09_EnhanceRetentionTransfer a ex:InstructionalEvent ;
+    rdfs:label "파지 및 전이 증진" ;
+    ex:hasApplicableStrategy ex:Strat_KWL_L, ex:Strat_Discussion .

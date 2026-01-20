@@ -1,0 +1,84 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/reading-strategy#> .
+
+### 1. 온톨로지 정의
+ex:ReadingStrategyOntology rdf:type owl:Ontology ;
+    rdfs:label "학교도서관 독서전략 범주화 온톨로지" .
+
+### 2. 클래스 정의 (Schema)
+ex:ReadingStrategy rdf:type owl:Class ;
+    rdfs:label "독서 전략" .
+
+ex:CognitiveStrategy rdf:type owl:Class ;
+    rdfs:label "인지 전략" .
+
+ex:ReadingProcess rdf:type owl:Class ;
+    rdfs:label "독서의 과정" .
+
+ex:TextStructure rdf:type owl:Class ;
+    rdfs:label "텍스트(글)의 구조" .
+
+ex:TextType rdf:type owl:Class ;
+    rdfs:label "텍스트(글)의 종류" .
+
+### 3. 속성 정의 (Properties)
+ex:belongsToProcess rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:ReadingStrategy ;
+    rdfs:range ex:ReadingProcess ;
+    rdfs:label "독서 과정에 속함" .
+
+ex:usesCognitiveStrategy rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:ReadingStrategy ;
+    rdfs:range ex:CognitiveStrategy ;
+    rdfs:label "인지 전략을 사용함" .
+
+ex:applicableToStructure rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:ReadingStrategy ;
+    rdfs:range ex:TextStructure ;
+    rdfs:label "텍스트 구조에 적용 가능" .
+
+ex:applicableToType rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:ReadingStrategy ;
+    rdfs:range ex:TextType ;
+    rdfs:label "텍스트 종류에 적용 가능" .
+
+### 4. 주요 범주 인스턴스 (Individuals)
+
+# 독서의 과정
+ex:BeforeReading rdf:type ex:ReadingProcess ; rdfs:label "독서 전" .
+ex:DuringReading rdf:type ex:ReadingProcess ; rdfs:label "독서 중" .
+ex:AfterReading rdf:type ex:ReadingProcess ; rdfs:label "독서 후" .
+
+# 인지 전략
+ex:ClarifyingPurpose rdf:type ex:CognitiveStrategy ; rdfs:label "독서목적 명료화" .
+ex:ActivatingPriorKnowledge rdf:type ex:CognitiveStrategy ; rdfs:label "사전지식활성화" .
+ex:Questioning rdf:type ex:CognitiveStrategy ; rdfs:label "질의형성" .
+ex:Inferring rdf:type ex:CognitiveStrategy ; rdfs:label "추론/예측" .
+ex:Monitoring rdf:type ex:CognitiveStrategy ; rdfs:label "모니터링" .
+ex:IdentifyingInfo rdf:type ex:CognitiveStrategy ; rdfs:label "특정정보확인" .
+ex:Summarizing rdf:type ex:CognitiveStrategy ; rdfs:label "요약/종합" .
+
+# 텍스트 종류
+ex:Fact rdf:type ex:TextType ; rdfs:label "사실" .
+ex:Argument rdf:type ex:TextType ; rdfs:label "주장" .
+ex:Appreciation rdf:type ex:TextType ; rdfs:label "감상" .
+ex:Social rdf:type ex:TextType ; rdfs:label "친교" .
+
+### 5. 14가지 독서 전략 인스턴스
+ex:Strategy01 rdf:type ex:ReadingStrategy ; rdfs:label "예측 안내하기" .
+ex:Strategy02 rdf:type ex:ReadingStrategy ; rdfs:label "브레인스토밍" .
+ex:Strategy03 rdf:type ex:ReadingStrategy ; rdfs:label "SQ3R" .
+ex:Strategy04 rdf:type ex:ReadingStrategy ; rdfs:label "마인드맵" .
+ex:Strategy05 rdf:type ex:ReadingStrategy ; rdfs:label "캐릭터 차트" .
+ex:Strategy06 rdf:type ex:ReadingStrategy ; rdfs:label "앙케이트/질문표" .
+ex:Strategy07 rdf:type ex:ReadingStrategy ; rdfs:label "KWL" .
+ex:Strategy08 rdf:type ex:ReadingStrategy ; rdfs:label "요약기법" .
+ex:Strategy09 rdf:type ex:ReadingStrategy ; rdfs:label "그래픽조직자" .
+ex:Strategy10 rdf:type ex:ReadingStrategy ; rdfs:label "QAR" .
+ex:Strategy11 rdf:type ex:ReadingStrategy ; rdfs:label "이야기지도" .
+ex:Strategy12 rdf:type ex:ReadingStrategy ; rdfs:label "생각 말하기" .
+ex:Strategy13 rdf:type ex:ReadingStrategy ; rdfs:label "건너뛰며 읽기" .
+ex:Strategy14 rdf:type ex:ReadingStrategy ; rdfs:label "훑어 읽기" .

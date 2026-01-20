@@ -1,0 +1,135 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/gagne-scaffolding#> .
+
+### 1. 온톨로지 정의
+ex:GagneScaffoldingOntology rdf:type owl:Ontology ;
+    rdfs:label "가네의 수업사태별 비계설정 및 수업전략 온톨로지" .
+
+### 2. 클래스 정의
+ex:InstructionalEvent rdf:type owl:Class ; rdfs:label "수업 사태" .
+ex:TeachingStrategy rdf:type owl:Class ; rdfs:label "수업 전략 (비계설정)" .
+
+### 3. 속성 정의
+ex:hasStrategy rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:InstructionalEvent ;
+    rdfs:range ex:TeachingStrategy ;
+    rdfs:label "포함하는 수업 전략" .
+
+ex:eventOrder rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:InstructionalEvent ;
+    rdfs:range xsd:integer .
+
+### 4. 인스턴스 정의 (수업 사태 및 세부 전략)
+
+## [1단계] 주의 집중
+ex:Event01 rdf:type ex:InstructionalEvent ;
+    rdfs:label "주의 집중" ;
+    ex:eventOrder 1 ;
+    ex:hasStrategy ex:Strat01_1, ex:Strat01_2, ex:Strat01_3 .
+
+ex:Strat01_1 rdf:type ex:TeachingStrategy ; rdfs:label "흥미 유발하기" .
+ex:Strat01_2 rdf:type ex:TeachingStrategy ; rdfs:label "시범" .
+ex:Strat01_3 rdf:type ex:TeachingStrategy ; rdfs:label "낮은 단계의 거리두기" .
+
+## [2단계] 수업 목표 제시
+ex:Event02 rdf:type ex:InstructionalEvent ;
+    rdfs:label "수업 목표 제시" ;
+    ex:eventOrder 2 ;
+    ex:hasStrategy ex:Strat02_1, ex:Strat02_2, ex:Strat02_3, ex:Strat02_4 .
+
+ex:Strat02_1 rdf:type ex:TeachingStrategy ; rdfs:label "학습목표 유지시키기" .
+ex:Strat02_2 rdf:type ex:TeachingStrategy ; rdfs:label "목표추구 유지하기" .
+ex:Strat02_3 rdf:type ex:TeachingStrategy ; rdfs:label "학습자의 요구를 북돋우고 세분화된 목표 설정하기" .
+ex:Strat02_4 rdf:type ex:TeachingStrategy ; rdfs:label "설명 제공하기" .
+
+## [3단계] 선행학습 상기
+ex:Event03 rdf:type ex:InstructionalEvent ;
+    rdfs:label "선행 학습 상기" ;
+    ex:eventOrder 3 ;
+    ex:hasStrategy ex:Strat03_1, ex:Strat03_2, ex:Strat03_3, ex:Strat03_4 .
+
+ex:Strat03_1 rdf:type ex:TeachingStrategy ; rdfs:label "자유의 정도 감소시키기" .
+ex:Strat03_2 rdf:type ex:TeachingStrategy ; rdfs:label "계획하기" .
+ex:Strat03_3 rdf:type ex:TeachingStrategy ; rdfs:label "활성화와 배경 지식의 활용" .
+ex:Strat03_4 rdf:type ex:TeachingStrategy ; rdfs:label "구체화하기" .
+
+## [4단계] 자극 자료 제시
+ex:Event04 rdf:type ex:InstructionalEvent ;
+    rdfs:label "자극 자료 제시" ;
+    ex:eventOrder 4 ;
+    ex:hasStrategy ex:Strat04_1, ex:Strat04_2, ex:Strat04_3, ex:Strat04_4, ex:Strat04_5 .
+
+ex:Strat04_1 rdf:type ex:TeachingStrategy ; rdfs:label "기대행동 시범보이기" .
+ex:Strat04_2 rdf:type ex:TeachingStrategy ; rdfs:label "중간단계의 거리두기" .
+ex:Strat04_3 rdf:type ex:TeachingStrategy ; rdfs:label "필요에 따라 설명 제공하기" .
+ex:Strat04_4 rdf:type ex:TeachingStrategy ; rdfs:label "모델링" .
+ex:Strat04_5 rdf:type ex:TeachingStrategy ; rdfs:label "학습자의 발언과 질문을 고무하고 이용하기" .
+
+## [5단계] 학습 안내
+ex:Event05 rdf:type ex:InstructionalEvent ;
+    rdfs:label "학습 안내" ;
+    ex:eventOrder 5 ;
+    ex:hasStrategy ex:Strat05_1, ex:Strat05_2, ex:Strat05_3, ex:Strat05_4, ex:Strat05_5, ex:Strat05_6, ex:Strat05_7, ex:Strat05_8 .
+
+ex:Strat05_1 rdf:type ex:TeachingStrategy ; rdfs:label "과전 통제" .
+ex:Strat05_2 rdf:type ex:TeachingStrategy ; rdfs:label "주제의 초점" .
+ex:Strat05_3 rdf:type ex:TeachingStrategy ; rdfs:label "학습자의 실습 지도하고 조력하기" .
+ex:Strat05_4 rdf:type ex:TeachingStrategy ; rdfs:label "직접적인 가르침" .
+ex:Strat05_5 rdf:type ex:TeachingStrategy ; rdfs:label "사고과정 시범 보이기" .
+ex:Strat05_6 rdf:type ex:TeachingStrategy ; rdfs:label "설정된 조력 제공하기" .
+ex:Strat05_7 rdf:type ex:TeachingStrategy ; rdfs:label "교수하기" .
+ex:Strat05_8 rdf:type ex:TeachingStrategy ; rdfs:label "인지적 구조화" .
+
+## [6단계] 성취 수행 유도
+ex:Event06 rdf:type ex:InstructionalEvent ;
+    rdfs:label "성취 수행 유도" ;
+    ex:eventOrder 6 ;
+    ex:hasStrategy ex:Strat06_1, ex:Strat06_2, ex:Strat06_3, ex:Strat06_4, ex:Strat06_5, ex:Strat06_6, ex:Strat06_7 .
+
+ex:Strat06_1 rdf:type ex:TeachingStrategy ; rdfs:label "보다 복잡한 언어와 표현의 확대" .
+ex:Strat06_2 rdf:type ex:TeachingStrategy ; rdfs:label "학습자 참여 권유하기" .
+ex:Strat06_3 rdf:type ex:TeachingStrategy ; rdfs:label "진술이나 입장 표명에 대한 근거의 증가" .
+ex:Strat06_4 rdf:type ex:TeachingStrategy ; rdfs:label "학생의 기여에 대한 반응" .
+ex:Strat06_5 rdf:type ex:TeachingStrategy ; rdfs:label "학습자가 단서를 제공하도록 유도하기" .
+ex:Strat06_6 rdf:type ex:TeachingStrategy ; rdfs:label "자기 선택적 순서가 포함된 일반적 참여" .
+ex:Strat06_7 rdf:type ex:TeachingStrategy ; rdfs:label "학생의 인지적 정의적 상태 및 능력 수준 알고자 노력하기" .
+
+## [7단계] 피드백 제공
+ex:Event07 rdf:type ex:InstructionalEvent ;
+    rdfs:label "피드백 제공" ;
+    ex:eventOrder 7 ;
+    ex:hasStrategy ex:Strat07_1, ex:Strat07_2, ex:Strat07_3, ex:Strat07_4, ex:Strat07_5, ex:Strat07_6, ex:Strat07_7 .
+
+ex:Strat07_1 rdf:type ex:TeachingStrategy ; rdfs:label "과제의 주요 특성 표시하기" .
+ex:Strat07_2 rdf:type ex:TeachingStrategy ; rdfs:label "피드백 주기" .
+ex:Strat07_3 rdf:type ex:TeachingStrategy ; rdfs:label "학습자 이해 확인 및 명료화하기" .
+ex:Strat07_4 rdf:type ex:TeachingStrategy ; rdfs:label "유관 조절" .
+ex:Strat07_5 rdf:type ex:TeachingStrategy ; rdfs:label "학습자의 사고를 직접적으로 평가하지 않는 피드백 제공하기" .
+ex:Strat07_6 rdf:type ex:TeachingStrategy ; rdfs:label "정서적인 지지와 양성의 높은 수준 보여주기" .
+ex:Strat07_7 rdf:type ex:TeachingStrategy ; rdfs:label "학습자의 실수에 유동적으로 반응" .
+
+## [8단계] 수행 평가
+ex:Event08 rdf:type ex:InstructionalEvent ;
+    rdfs:label "수행 평가" ;
+    ex:eventOrder 8 ;
+    ex:hasStrategy ex:Strat08_1, ex:Strat08_2, ex:Strat08_3, ex:Strat08_4 .
+
+ex:Strat08_1 rdf:type ex:TeachingStrategy ; rdfs:label "의욕적이면서도 위협적이지 않은 환경 제공하기" .
+ex:Strat08_2 rdf:type ex:TeachingStrategy ; rdfs:label "학습자가 답을 유출하기 위해서 협의하는 동안 인내하기" .
+ex:Strat08_3 rdf:type ex:TeachingStrategy ; rdfs:label "질문하기" .
+ex:Strat08_4 rdf:type ex:TeachingStrategy ; rdfs:label "높은 단계의 거리두기" .
+
+## [9단계] 파지 및 전이 제고
+ex:Event09 rdf:type ex:InstructionalEvent ;
+    rdfs:label "파지 및 전이 제고" ;
+    ex:eventOrder 9 ;
+    ex:hasStrategy ex:Strat09_1, ex:Strat09_2, ex:Strat09_3, ex:Strat09_4, ex:Strat09_5 .
+
+ex:Strat09_1 rdf:type ex:TeachingStrategy ; rdfs:label "알려진 답이 거의 없는 질문" .
+ex:Strat09_2 rdf:type ex:TeachingStrategy ; rdfs:label "연결된 담화 토론" .
+ex:Strat09_3 rdf:type ex:TeachingStrategy ; rdfs:label "교사의 지지 강도 줄이기" .
+ex:Strat09_4 rdf:type ex:TeachingStrategy ; rdfs:label "쓰기" .
+ex:Strat09_5 rdf:type ex:TeachingStrategy ; rdfs:label "상호작용에 있어 대화적 유형 사용하기" .

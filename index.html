@@ -65,13 +65,14 @@
         }
 
         .tab-item {
-            padding: 10px 20px;
+            padding: 12px 24px;
             color: var(--text-secondary);
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 800;
+            font-size: 1.1rem;
             border-radius: 8px 8px 0 0;
             transition: all 0.2s;
-            border-bottom: 2px solid transparent;
+            border-bottom: 3px solid transparent;
         }
 
         .tab-item:hover {
@@ -164,14 +165,15 @@
             background: var(--vol-1);
             color: #000;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: transform 0.1s;
+            transition: all 0.2s;
         }
 
         .action-btn:hover {
@@ -293,6 +295,21 @@
 
         .filter-btn:hover:not(.active) {
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        .chatbot-notice {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 3px solid var(--vol-1);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--vol-1);
+            font-weight: 500;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* --- TOOLTIP --- */
@@ -976,10 +993,62 @@
             margin: 0;
         }
 
-        /* High Contrast Variant for Item Icon/Text on Hover */
         .ws-dropdown-item:hover i,
         .ws-dropdown-item:hover span {
             color: #1e40af;
+        }
+
+        /* --- TOOLTIP & GUIDE TEXT --- */
+        .ws-guide-text {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-right: 12px;
+            font-weight: 500;
+        }
+
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 320px;
+            background-color: #0f172a;
+            color: #fff;
+            text-align: left;
+            border-radius: 12px;
+            padding: 16px;
+            position: absolute;
+            z-index: 2100;
+            /* Much higher than dropdown */
+            top: calc(100% + 15px);
+            right: 0;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5);
+            font-weight: 500;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            right: 40px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: transparent transparent #0f172a transparent;
+        }
+
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -1016,6 +1085,10 @@
                     <button class="filter-btn" onclick="setFilter('도덕 1')">도덕 1</button>
                     <button class="filter-btn" onclick="setFilter('도덕 2')">도덕 2</button>
                     <button class="filter-btn" onclick="setFilter('HS')">고등학교</button>
+                </div>
+                <div class="chatbot-notice">
+                    <i data-lucide="info" style="width:16px; height:16px;"></i>
+                    <span>성취기준을 선택하여 담으시면 해당 수업 및 평가 계획이 인공지능에 의해 자동으로 설계됩니다.</span>
                 </div>
             </div>
 
@@ -1117,15 +1190,22 @@
             <button class="close-btn" onclick="switchTab('explore')"
                 style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
                     data-lucide="x"></i> 그래프로 돌아가기</button>
-            <div class="action-bar">
+            <div class="action-bar" style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
                 <button class="action-btn" onclick="copyTable('instructional-design-table')"><i data-lucide="copy"></i>
                     표 양식 복사하기</button>
                 <button class="action-btn" onclick="downloadPDF('view-detail-plan')"
                     style="background:#ef4444; color:#fff;"><i data-lucide="file-text"></i> PDF 파일로 내려받기</button>
-                <div class="ws-dropdown-container">
+
+                <div class="ws-dropdown-container tooltip-container">
                     <button class="action-btn" onclick="toggleWorksheetDropdown(event)"
                         style="background:#0ea5e9; color:#fff;"><i data-lucide="download"></i> 학생용 학습지 내려받기 <i
                             data-lucide="chevron-down" style="width:16px; margin-left:5px;"></i></button>
+                    <div class="tooltip-text">
+                        <div
+                            style="font-weight:800; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px; margin-bottom:8px; color:#38bdf8;">
+                            지도안에 독서 활동을 추가하면 자동으로 학습지가 생성됩니다.</div>
+                        💡 활용 팁: 수업 사태별로 선택한 독서 전략(KWL, SQ3R 등)들이 한 장의 학습지로 구성됩니다. PDF로 받거나 표 양식을 복사해 한글 문서에 활용하세요!
+                    </div>
                     <div id="ws-dropdown-menu" class="ws-dropdown-menu">
                         <button class="ws-dropdown-item" onclick="copyWorksheetTable()">
                             <i data-lucide="copy"></i>
@@ -2842,7 +2922,7 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
             });
 
             if (!hasActivity) {
-                alert('지도안에서 선택된 독서 전략이 없습니다.');
+                alert('아직 선택된 독서 활동이 없습니다. 지도안의 [독서 중 추천 리스트]에서 전략을 클릭하여 활동 내용을 먼저 입력해 주세요.');
                 return;
             }
 
@@ -2918,7 +2998,7 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
             });
 
             if (!hasActivity) {
-                alert('바구니에 담긴 성취기준에 대해 선택된 독서 전략이 없습니다. 지도안의 [독서 전략 태그]를 클릭하여 활동을 먼저 열어주세요.');
+                alert('아직 선택된 독서 활동이 없습니다. 지도안의 [독서 중 추천 리스트]에서 전략을 클릭하여 활동 내용을 먼저 입력해 주세요.');
                 return;
             }
 

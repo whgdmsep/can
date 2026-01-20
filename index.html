@@ -929,54 +929,58 @@
         .ws-dropdown-menu {
             display: none;
             position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
+            top: 50%;
+            left: calc(100% + 12px);
+            transform: translateY(-50%);
             background: #ffffff;
             border: 2px solid #0f172a;
             border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            box-shadow: 10px 10px 25px -5px rgba(0, 0, 0, 0.3);
             z-index: 1000;
             min-width: 220px;
             overflow: hidden;
-            animation: slideIn 0.2s ease-out;
+            display: none;
+            /* Initially hidden */
+            flex-direction: column;
+            animation: slideInRight 0.2s ease-out;
         }
 
-        @keyframes slideIn {
+        @keyframes slideInRight {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translate(-10px, -50%);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translate(0, -50%);
             }
         }
 
         .ws-dropdown-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
+            gap: 10px;
+            padding: 12px 18px;
             cursor: pointer;
             transition: all 0.2s;
             color: #0f172a;
             border: none;
             background: none;
-            width: 100%;
-            text-align: left;
+            white-space: nowrap;
             font-family: inherit;
+            width: 100%;
         }
 
         .ws-dropdown-item i {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             color: #2563eb;
         }
 
         .ws-dropdown-item span {
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.85rem;
         }
 
         .ws-dropdown-item:hover {
@@ -988,6 +992,7 @@
         }
 
         .ws-dropdown-divider {
+            width: 100%;
             height: 2px;
             background: #e2e8f0;
             margin: 0;
@@ -1021,8 +1026,7 @@
             padding: 16px;
             position: absolute;
             z-index: 2100;
-            /* Much higher than dropdown */
-            top: calc(100% + 15px);
+            top: calc(100% + 12px);
             right: 0;
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1032,7 +1036,7 @@
             font-weight: 500;
             pointer-events: none;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px);
+            transform: translateY(-10px);
         }
 
         .tooltip-text::after {
@@ -1049,6 +1053,59 @@
             visibility: visible;
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .ws-dropdown-menu.active {
+            display: flex !important;
+        }
+
+        /* --- BEST STRATEGY BADGE & GUIDE --- */
+        .best-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+            cursor: help;
+        }
+
+        .best-tag {
+            border: 2px solid #ea580c !important;
+            background: rgba(234, 88, 12, 0.05) !important;
+            font-weight: 800 !important;
+            color: #ea580c !important;
+        }
+
+        .recommend-reason {
+            display: block;
+            font-size: 0.75rem;
+            color: #ea580c;
+            margin-top: 4px;
+            line-height: 1.4;
+            font-weight: 600;
+            padding-left: 8px;
+            border-left: 2px solid #ea580c;
+        }
+
+        .ws-footer-guide {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .ws-dropdown-menu.active {
+            display: flex !important;
         }
     </style>
 </head>
@@ -1190,7 +1247,8 @@
             <button class="close-btn" onclick="switchTab('explore')"
                 style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
                     data-lucide="x"></i> 그래프로 돌아가기</button>
-            <div class="action-bar" style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+            <div class="action-bar"
+                style="display:flex; align-items:center; justify-content:flex-end; gap:8px; padding-right:240px;">
                 <button class="action-btn" onclick="copyTable('instructional-design-table')"><i data-lucide="copy"></i>
                     표 양식 복사하기</button>
                 <button class="action-btn" onclick="downloadPDF('view-detail-plan')"
@@ -1199,7 +1257,7 @@
                 <div class="ws-dropdown-container tooltip-container">
                     <button class="action-btn" onclick="toggleWorksheetDropdown(event)"
                         style="background:#0ea5e9; color:#fff;"><i data-lucide="download"></i> 학생용 학습지 내려받기 <i
-                            data-lucide="chevron-down" style="width:16px; margin-left:5px;"></i></button>
+                            data-lucide="chevron-right" style="width:16px; margin-left:5px;"></i></button>
                     <div class="tooltip-text">
                         <div
                             style="font-weight:800; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:8px; margin-bottom:8px; color:#38bdf8;">
@@ -1445,6 +1503,60 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
             ];
 
             return recommended.slice(0, 4); // 상위 4개 반환
+        }
+
+        function getBestStrategyInfo(definition, process) {
+            // 성취기준 키워 분석을 통한 지능적 추천 로직
+            const def = definition || '';
+
+            if (process === '독서 중') {
+                if (def.includes('인물') || def.includes('성찰') || def.includes('자아') || def.includes('인격') || def.includes('가치관')) {
+                    return {
+                        strategy: '캐릭터 차트',
+                        reason: '도덕적 인물의 내면 성찰과 삶의 태도를 깊이 있게 탐구하기에 캐릭터 차트가 가장 효과적입니다.',
+                        goal: '공감 능력 향상 및 도덕적 추론 능력 함양'
+                    };
+                }
+                if (def.includes('갈등') || def.includes('해결') || def.includes('원인') || def.includes('분석') || def.includes('폭력')) {
+                    return {
+                        strategy: '원인과 결과',
+                        reason: '갈등 상황의 근본 원인을 분석하고 평화적 해결 방안을 도출하는 데 최적화된 전략입니다.',
+                        goal: '문제 해결 능력 및 논리적 사고력 강화'
+                    };
+                }
+                if (def.includes('질문') || def.includes('탐구') || def.includes('추론') || def.includes('판단')) {
+                    return {
+                        strategy: 'QAR',
+                        reason: '질문의 유형을 구분하여 텍스트를 깊이 있게 추론하고 비판적으로 사고하는 힘을 길러줍니다.',
+                        goal: '비판적 사고력 및 독해 전략 내면화'
+                    };
+                }
+                if (def.includes('비교') || def.includes('대조') || def.includes('차이') || def.includes('다양성') || def.includes('존중')) {
+                    return {
+                        strategy: '비교와 대조',
+                        reason: '서로 다른 가치나 문화를 시각적으로 비교하여 공통점과 차이점을 명확히 이해하도록 돕습니다.',
+                        goal: '다양성 존중 태도 및 종합적 사고 능력'
+                    };
+                }
+            } else if (process === '독서 후') {
+                if (def.includes('요약') || def.includes('주제') || def.includes('의미') || def.includes('정립')) {
+                    return {
+                        strategy: '요약하기',
+                        reason: '성취기준에서 강조하는 핵심 가치를 자신의 언어로 정리하여 삶의 목적성을 확립하는 데 큰 도움이 됩니다.',
+                        goal: '종합적 문해력 및 가치 정립 능력'
+                    };
+                }
+            } else if (process === '독서 전') {
+                if (def.includes('성찰') || def.includes('경험') || def.includes('이미')) {
+                    return {
+                        strategy: 'KWL',
+                        reason: '자신이 이미 알고 있는 것과 알고 싶은 것을 구분하여 능동적인 읽기 목적을 설정하게 해줍니다.',
+                        goal: '자기주도적 학습 능력 및 배경지식 활성화'
+                    };
+                }
+            }
+
+            return null; // 기본적으로는 시스템 추천 없음
         }
 
         // 도덕과 핵심 역량 전체 목록
@@ -2045,8 +2157,23 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
                         activityHtml += `<div class="activity-example">${detailActivity}</div>`;
 
                         notes = `<div class="reading-badge ${badgeClass}">${textType} 중심 전략</div>` +
-                            `<div style="color:#0369a1; font-weight:600; font-size:0.8rem; margin-bottom:5px;">${event.readingProcess} 추천 리스트</div>` +
-                            strategies.map(st => `<span class="strategy-tag" onclick="openActivityModal('${s.id}', '${st}', '${event.id}')">• ${st}</span>`).join('<br>');
+                            `<div style="color:#0369a1; font-weight:600; font-size:0.8rem; margin-bottom:5px;">${event.readingProcess} 추천 리스트</div>`;
+
+                        const bestInfo = getBestStrategyInfo(s.definition, event.readingProcess);
+
+                        notes += strategies.map(st => {
+                            const isBest = bestInfo && bestInfo.strategy === st;
+                            const badge = isBest ? `<div class="best-badge tooltip-container" style="display:inline-flex; width:auto; border-bottom:none;">
+                                ⭐ BEST
+                                <div class="tooltip-text" style="width:250px; left:50%; margin-left:-125px; bottom:140%; top:auto;">
+                                    <strong>학습 목표:</strong><br>${bestInfo.goal}
+                                </div>
+                            </div><br>` : '';
+                            const reason = isBest ? `<span class="recommend-reason">${bestInfo.reason}</span>` : '';
+                            const tagClass = isBest ? 'strategy-tag best-tag' : 'strategy-tag';
+
+                            return `${badge}<span class="${tagClass}" onclick="openActivityModal('${s.id}', '${st}', '${event.id}')">• ${st}</span>${reason}`;
+                        }).join('<br>');
                     } else {
                         activityHtml += `<div class="activity-example">활동 내용을 입력하세요.</div>`;
                     }
@@ -2078,10 +2205,14 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
                 html += `
                         </tbody>
                     </table>
+                    <div class="ws-footer-guide">
+                        💡 성취기준에 딱 맞는 <strong>베스트 전략</strong>을 선택해 보세요. 활동 내용을 입력하면 학생용 학습지에 자동으로 포함됩니다.
+                    </div>
                 `;
                 paper.innerHTML = html;
                 container.appendChild(paper);
             });
+            lucide.createIcons();
         }
 
         function renderLessonPlan() {
@@ -2844,33 +2975,27 @@ edu:ST_12inyun01-01 a edu:Standard ; dc:identifier "12인윤01-01" ; edu:volume 
         function toggleWorksheetDropdown(event) {
             event.stopPropagation();
             const menu = document.getElementById('ws-dropdown-menu');
-            const isVisible = menu.style.display === 'block';
-
-            // Close all other instances if any (though here only one)
-            menu.style.display = isVisible ? 'none' : 'block';
-            if (!isVisible) {
-                // Change main button state if needed
-            }
+            menu.classList.toggle('active');
         }
 
         // Close dropdown when clicking outside
         window.addEventListener('click', function (e) {
             const menu = document.getElementById('ws-dropdown-menu');
-            if (menu && menu.style.display === 'block') {
+            if (menu && menu.classList.contains('active')) {
                 if (!e.target.closest('.ws-dropdown-container')) {
-                    menu.style.display = 'none';
+                    menu.classList.remove('active');
                 }
             }
         });
 
         function closeWsDropdown() {
             const menu = document.getElementById('ws-dropdown-menu');
-            if (menu) menu.style.display = 'none';
+            if (menu) menu.classList.remove('active');
         }
 
         function copyWorksheetTable() {
             closeWsDropdown();
-            // ... (rest of the copy logic)
+            // 학습지 렌더링을 위해 임시로 출력 영역 표시
             const printArea = document.getElementById('worksheet-print-area');
             const stdInfo = document.getElementById('ws-std-info');
             const wsBody = document.getElementById('ws-body');

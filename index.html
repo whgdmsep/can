@@ -50,7 +50,6 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            /* Changed for Tab Layout */
         }
 
         /* --- TABS --- */
@@ -185,6 +184,7 @@
             background: radial-gradient(circle at 50% 50%, #2a2d45 0%, #1A1C2E 80%);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
+            min-height: 300px;
         }
 
         .graph-header {
@@ -203,6 +203,7 @@
             font-weight: 800;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -529,20 +530,111 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        /* Mobile */
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
             body {
+                overflow-y: auto;
+                height: auto;
+            }
+
+            .main-tabs {
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 0 10px;
+            }
+
+            .main-view {
+                height: auto;
+                display: none;
+                flex-direction: column;
+            }
+
+            .main-view.active {
+                display: flex;
+            }
+
+            /* EXPLORE VIEW MOBILE */
+            #view-explore {
                 flex-direction: column;
             }
 
             #graph-container {
                 width: 100%;
-                height: 45vh;
+                height: 50vh;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             }
 
             #list-container {
                 width: 100%;
-                height: 55vh;
+                height: auto;
+                box-shadow: none;
+                border-left: none;
+                padding-bottom: 20px;
+            }
+
+            .list-header {
+                padding: 15px;
+            }
+
+            .search-box input {
+                padding: 12px 15px 12px 45px;
+                font-size: 1rem;
+            }
+
+            #result-area {
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+
+            #basket-area {
+                height: 300px;
+                /* Give more space for basket on mobile */
+                position: sticky;
+                bottom: 0;
+            }
+
+            .float-controls {
+                bottom: 320px;
+            }
+
+            /* PLAN VIEWS MOBILE */
+            .plan-container {
+                padding: 15px;
+            }
+
+            .paper {
+                padding: 20px 15px;
+            }
+
+            .paper h2 {
+                font-size: 1.5rem;
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .close-btn {
+                position: static !important;
+                margin-bottom: 15px;
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>

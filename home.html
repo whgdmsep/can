@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 독서 정원</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Pretendard:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Deep Forest Green Gradient */
+            --bg-color: #0f2027;
+            --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+
+            --text-primary: #f0fdf4;
+            /* Mint White */
+            --text-secondary: #a7f3d0;
+            /* Soft Mint */
+
+            --card-bg: rgba(255, 255, 255, 0.05);
+            /* Glass effect */
+            --card-border: 1px solid rgba(255, 255, 255, 0.1);
+
+            /* Accents */
+            --accent-1: #34d399;
+            /* Emerald */
+            --accent-2: #6ee7b7;
+            /* Teal */
+            --accent-3: #a78bfa;
+            /* Soft Violet (Contrast for MBTI) */
+            --accent-4: #fbbf24;
+            /* Amber (Contrast for Log) */
+
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --border-radius: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            overflow-x: hidden;
+        }
+
+        /* Background Glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.15), transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header Area */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            max-width: 600px;
+        }
+
+        .brand-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent-1);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-family: 'Noto Serif KR', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+        }
+
+        p.subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Grid Layout */
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Card Styles */
+        .menu-card {
+            background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 35px;
+            text-decoration: none;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            height: 240px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-md);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Typography inside Card */
+        .category {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .card-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            z-index: 10;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: #d1fae5;
+            /* Light mint text */
+            line-height: 1.5;
+            max-width: 90%;
+            z-index: 10;
+            margin-top: auto;
+            opacity: 0.8;
+        }
+
+        /* Icons/Background Accents */
+        .card-icon-bg {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            font-size: 9rem;
+            opacity: 0.05;
+            transform: rotate(-15deg);
+            transition: transform 0.5s ease;
+            color: #fff;
+        }
+
+        .menu-card:hover .card-icon-bg {
+            transform: rotate(0deg) scale(1.1);
+            opacity: 0.1;
+        }
+
+        .icon-small {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #1a1a1a;
+            /* Dark icon on bright bg */
+            margin-bottom: 15px;
+        }
+
+        /* Card Variations */
+        .card-pet .category {
+            color: var(--accent-1);
+        }
+
+        .card-pet .icon-small {
+            background: var(--accent-1);
+        }
+
+        .card-lib .category {
+            color: var(--accent-2);
+        }
+
+        .card-lib .icon-small {
+            background: var(--accent-2);
+        }
+
+        .card-mbti .category {
+            color: var(--accent-3);
+        }
+
+        .card-mbti .icon-small {
+            background: var(--accent-3);
+        }
+
+        .card-timer .category {
+            color: var(--accent-4);
+        }
+
+        .card-timer .icon-small {
+            background: var(--accent-4);
+        }
+
+        /* Navigation */
+        .back-link {
+            margin-top: 50px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .back-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-1);
+        }
+
+        @media (max-width: 768px) {
+            .menu-container {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .menu-card {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Dashboard Content -->
+    <div id="dashboard-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <header>
+            <span class="brand-label">Student Reading Dashboard</span>
+            <h1 id="welcome-title">나의 독서 정원</h1>
+            <p class="subtitle">나의 독서 기록을 성장시키고 관리하는 공간</p>
+        </header>
+
+        <div class="menu-container">
+            <!-- Menu 1: Tree -->
+            <a href="Egg_game.html" class="menu-card card-pet">
+                <div class="icon-small"><i class="fas fa-tree"></i></div>
+                <span class="category">Gamification</span>
+                <div class="card-title">독서 나무 키우기</div>
+                <div class="card-desc">독서 에너지로 나무를 성장시키세요. 꾸준함이 숲을 이룹니다.</div>
+                <i class="fas fa-seedling card-icon-bg"></i>
+            </a>
+
+            <!-- Menu 2: Library -->
+            <a href="my_library.html" class="menu-card card-lib">
+                <div class="icon-small"><i class="fas fa-book"></i></div>
+                <span class="category">Archive</span>
+                <div class="card-title">나의 서재</div>
+                <div class="card-desc">읽은 책들을 기록하고 나만의 디지털 서재를 완성해보세요.</div>
+                <i class="fas fa-book-open card-icon-bg"></i>
+            </a>
+
+            <!-- Menu 3: MBTI -->
+            <a href="mbti_book.html" class="menu-card card-mbti">
+                <div class="icon-small"><i class="fas fa-compass"></i></div>
+                <span class="category">Curation</span>
+                <div class="card-title">도덕 가치관 탐색</div>
+                <div class="card-desc">딜레마 상황 속 나의 선택을 통해 맞춤형 인생 책을 찾아보세요.</div>
+                <i class="fas fa-lightbulb card-icon-bg"></i>
+            </a>
+
+            <!-- Menu 4: Reading Log -->
+            <a href="reading_log.html" class="menu-card card-timer">
+                <div class="icon-small"><i class="fas fa-pen-fancy"></i></div>
+                <span class="category">Journal</span>
+                <div class="card-title">나의 독서 기록</div>
+                <div class="card-desc">KWL 기법을 활용하여 독서 전, 중, 후의 생각을 체계적으로 정리해보세요.</div>
+                <i class="fas fa-clipboard-list card-icon-bg"></i>
+            </a>
+        </div>
+
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> 도덕 교과 수업 메인으로 돌아가기
+        </a>
+    </div>
+
+    <script>
+        // No login required for navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Optional: Check if user is already logged in (from localStorage) and update title
+            const user = localStorage.getItem('currentUser');
+            if (user) {
+                document.getElementById('welcome-title').innerText = `${user}님의 독서 정원`;
+                document.getElementById('welcome-title').style.color = 'var(--accent-2)';
+            }
+        });
+    </script>
+
+    </style>
+
+</body>
+
+</html>

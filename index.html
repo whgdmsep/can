@@ -156,9 +156,25 @@
         }
 
         .action-bar {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1000px;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .action-bar>* {
+            flex: 1 1 200px;
+            display: flex;
+        }
+
+        .action-bar .action-btn {
+            width: 100%;
+            justify-content: center;
+            white-space: nowrap;
         }
 
         .action-btn {
@@ -641,10 +657,20 @@
             .action-bar {
                 flex-direction: column;
                 width: 100%;
+                gap: 12px;
+                padding: 0;
             }
 
-            .action-btn {
-                width: 100%;
+            .action-bar>* {
+                flex: none;
+                width: 100% !important;
+            }
+
+            .action-btn,
+            .ws-dropdown-container,
+            .ws-dropdown-container .action-btn {
+                width: 100% !important;
+                flex: none;
                 justify-content: center;
             }
 
@@ -923,7 +949,8 @@
         /* --- DROPDOWN MENU --- */
         .ws-dropdown-container {
             position: relative;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
         }
 
         .ws-dropdown-menu {
@@ -1116,6 +1143,8 @@
         <div class="tab-item" onclick="switchTab('lesson')">수업 계획서</div>
         <div class="tab-item" onclick="switchTab('assessment')">평가 계획서</div>
         <div class="tab-item" onclick="switchTab('detail-plan')">수업지도안</div>
+        <div class="tab-item" onclick="window.open('index2.html', '_self')">독서 도우미</div>
+        <div class="tab-item" onclick="window.open('index3.html', '_self')">융합수업</div>
     </nav>
 
     <!-- VIEW 1: EXPLORE -->
@@ -1123,7 +1152,7 @@
 
         <div id="graph-container">
             <div class="graph-header">
-                <h1>지식의 우주</h1>
+                <h1>도덕과 지식의 우주</h1>
                 <p>Moral Knowledge Graph</p>
             </div>
             <div id="graph-tooltip"></div>
@@ -1247,8 +1276,7 @@
             <button class="close-btn" onclick="switchTab('explore')"
                 style="position:absolute; top:20px; right:20px; z-index:100; background:rgba(239,68,68,0.9); color:#fff; border:none; padding:12px 24px; font-weight:700; cursor:pointer; border-radius:8px; display:flex; align-items:center; gap:8px; transition:all 0.2s; font-size:0.95rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i
                     data-lucide="x"></i> 그래프로 돌아가기</button>
-            <div class="action-bar"
-                style="display:flex; align-items:center; justify-content:flex-end; gap:8px; padding-right:240px;">
+            <div class="action-bar">
                 <button class="action-btn" onclick="copyTable('instructional-design-table')"><i data-lucide="copy"></i>
                     표 양식 복사하기</button>
                 <button class="action-btn" onclick="downloadPDF('view-detail-plan')"
